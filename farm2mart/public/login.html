@@ -1,0 +1,1906 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Farm2Mart - Kisan Login & Verification</title>
+  <style>
+    :root {
+      --p: #012d1d;
+      --p2: #1b4332;
+      --ink: #161e15;
+      --muted: #59615b;
+      --bg: #f3fcee;
+      --soft: #e8f1e2;
+      --line: #cbd5cb;
+      --gold: #fed255;
+      --low: #176b43;
+      --card: #ffffff;
+      --err: #ba1a1a;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    .shell {
+      max-width: 480px;
+      min-height: 100vh;
+      margin: auto;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 30px rgba(1,45,29,0.08);
+      position: relative;
+    }
+    .top {
+      height: 70px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(243,252,238,0.92);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(220,229,215,0.6);
+    }
+    .brand { display: flex; align-items: center; gap: 9px; cursor: pointer; }
+    .mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: var(--p);
+      color: var(--gold);
+      display: grid;
+      place-items: center;
+      font-size: 21px;
+      font-weight: bold;
+    }
+    .brand b, h1, h2, h3 { font-family: Georgia, serif; }
+    .brand b { display: block; font-size: 20px; color: var(--p); line-height: 1.1; }
+    .brand small { color: var(--muted); font-size: 11px; }
+    .lang {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 8px 14px;
+      background: #fff;
+      color: var(--p);
+      font-weight: bold;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      transition: all 0.2s ease;
+    }
+    .lang:hover { background: var(--soft); }
+
+    .content {
+      padding: 20px 18px 30px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Hero Banner */
+    .hero-auth {
+      position: relative;
+      overflow: hidden;
+      padding: 24px 20px;
+      border-radius: 20px;
+      background: linear-gradient(140deg, var(--p2), var(--p));
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(1,45,29,0.15);
+      margin-bottom: 20px;
+    }
+    .hero-auth:after {
+      content: '🌾';
+      position: absolute;
+      right: -10px;
+      bottom: -25px;
+      font-size: 110px;
+      opacity: 0.14;
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.15);
+      color: #a5d0b9;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .hero-auth h1 {
+      font-size: 24px;
+      margin: 4px 0 6px;
+      line-height: 1.2;
+    }
+    .hero-auth p {
+      margin: 0;
+      font-size: 13px;
+      color: #dcefe0;
+      line-height: 1.4;
+    }
+
+    /* Tab switch */
+    .tab-bar {
+      display: flex;
+      background: #e4eee0;
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 18px;
+    }
+    .tab-btn {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: #fff;
+      color: var(--p);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    /* Form Container */
+    .form-card {
+      background: #fff;
+      border: 1px solid #dce5d7;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 6px 20px rgba(1,45,29,0.05);
+    }
+    .field {
+      margin-bottom: 16px;
+    }
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .phone-input-wrap {
+      display: flex;
+      border: 1.5px solid #bfcabe;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      transition: border-color 0.2s;
+    }
+    .phone-input-wrap:focus-within {
+      border-color: var(--p);
+      box-shadow: 0 0 0 3px rgba(1,45,29,0.08);
+    }
+    .country-code {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0 12px;
+      background: var(--soft);
+      font-weight: 700;
+      color: var(--p);
+      border-right: 1px solid #bfcabe;
+      font-size: 13px;
+    }
+    .phone-input-wrap input {
+      flex: 1;
+      border: 0;
+      padding: 13px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    /* OTP Inputs */
+    .otp-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .otp-cell {
+      height: 48px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      border: 1.5px solid #bfcabe;
+      border-radius: 10px;
+      outline: none;
+      font-family: inherit;
+      background: #fff;
+      transition: all 0.2s;
+    }
+    .otp-cell:focus {
+      border-color: var(--p);
+      background: #fbfefb;
+      box-shadow: 0 0 0 3px rgba(1,45,29,0.1);
+    }
+
+    .primary-btn {
+      width: 100%;
+      border-radius: 12px;
+      font-weight: bold;
+      padding: 14px;
+      cursor: pointer;
+      font-size: 14px;
+      border: 0;
+      background: var(--p);
+      color: #fff;
+      margin-top: 10px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .primary-btn:hover { background: var(--p2); }
+    .secondary-btn {
+      width: 100%;
+      border-radius: 12px;
+      font-weight: bold;
+      padding: 12px;
+      cursor: pointer;
+      font-size: 13px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--p);
+      margin-top: 10px;
+      transition: all 0.2s ease;
+    }
+    .secondary-btn:hover { background: var(--soft); }
+
+    /* Quick Demo Helper Box */
+    .demo-credential-box {
+      margin-top: 16px;
+      background: #edf6e8;
+      border: 1px dashed var(--low);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12px;
+    }
+    .demo-credential-box b { color: var(--p); }
+
+    .help-strip {
+      margin-top: auto;
+      padding-top: 20px;
+      text-align: center;
+    }
+    .help-strip a {
+      color: var(--p);
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+    }
+
+    /* Modal / Language Selector */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(22,30,21,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .lang-sheet {
+      width: min(480px, 100%);
+      background: #fff;
+      border-radius: 24px 24px 0 0;
+      padding: 20px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 -8px 30px rgba(0,0,0,0.15);
+      animation: slideUp 0.25s ease-out;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .sheet-handle { width: 36px; height: 4px; background: #c1c8c2; border-radius: 3px; margin: 0 auto 16px; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .sheet-header h3 { margin: 0; font-size: 18px; color: var(--p); font-family: Georgia, serif; }
+    .close-btn { border: 0; background: var(--soft); width: 30px; height: 30px; border-radius: 50%; font-size: 16px; cursor: pointer; }
+    .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
+    .lang-btn {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.15s ease;
+    }
+    .lang-btn:hover { background: var(--soft); border-color: var(--p); }
+    .lang-btn.active {
+      border: 2px solid var(--p);
+      background: #c1ecd433;
+      font-weight: bold;
+    }
+    .lang-btn b { display: block; font-size: 13px; color: var(--ink); }
+    .lang-btn small { color: var(--muted); font-size: 11px; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: 86px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--p);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: bold;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Header -->
+  <header class="top">
+    <div class="brand">
+      <div class="mark">🌾</div>
+      <div>
+        <b>Farm2Mart</b>
+        <small data-i18n="tagline">Kisan Procurement Portal</small>
+      </div>
+    </div>
+    <button class="lang" id="lang-trigger" aria-label="Switch Language">
+      <span id="lang-current-label">EN · தமிழ்</span>
+      <span style="font-size:10px">▼</span>
+    </button>
+  </header>
+
+  <div class="content">
+    
+    <!-- Hero Banner -->
+    <section class="hero-auth">
+      <span class="hero-badge" data-i18n="badge_gov">GOVERNMENT VERIFIED PORTAL</span>
+      <h1 data-i18n="login_title">Farmer Sign In</h1>
+      <p data-i18n="login_subtitle">Access your direct MSP sales passes, grain quality reports, and DBT bank disbursements.</p>
+    </section>
+
+    <!-- Sign-in Mode Switch -->
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-phone" onclick="switchTab('phone')" data-i18n="tab_otp">Mobile OTP</button>
+      <button class="tab-btn" id="tab-kisan" onclick="switchTab('kisan')" data-i18n="tab_kisan_id">Kisan / Aadhaar ID</button>
+    </div>
+
+    <!-- Mode 1: Mobile Phone OTP (Default) -->
+    <div class="form-card" id="pane-phone">
+      <!-- Step 1: Request OTP -->
+      <div id="step-request-otp">
+        <div class="field">
+          <label data-i18n="lbl_mobile_number">REGISTERED MOBILE NUMBER</label>
+          <div class="phone-input-wrap">
+            <div class="country-code">🇮🇳 +91</div>
+            <input type="tel" id="input-phone" placeholder="98765 43210" maxlength="10" value="9876543210">
+          </div>
+          <small style="color:var(--muted);font-size:11px;margin-top:5px;display:block" data-i18n="mobile_hint">We will send a 6-digit verification code via SMS.</small>
+        </div>
+
+        <button class="primary-btn" id="btn-send-otp" onclick="requestOtp()">
+          <span data-i18n="btn_get_otp">Get Verification Code</span> →
+        </button>
+      </div>
+
+      <!-- Step 2: Enter OTP (Revealed after code request) -->
+      <div id="step-verify-otp" class="hidden">
+        <div class="field">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <label data-i18n="lbl_enter_otp" style="margin:0">ENTER 6-DIGIT OTP</label>
+            <button onclick="resendOtp()" style="border:0;background:none;color:var(--low);font-weight:700;font-size:12px;cursor:pointer" data-i18n="btn_resend">Resend OTP</button>
+          </div>
+          <div class="otp-grid">
+            <input class="otp-cell" maxlength="1" type="tel" autofocus>
+            <input class="otp-cell" maxlength="1" type="tel">
+            <input class="otp-cell" maxlength="1" type="tel">
+            <input class="otp-cell" maxlength="1" type="tel">
+            <input class="otp-cell" maxlength="1" type="tel">
+            <input class="otp-cell" maxlength="1" type="tel">
+          </div>
+          <p style="font-size:11px;color:var(--muted);margin:8px 0 0" id="otp-sent-sub">OTP sent to +91 98765 43210</p>
+        </div>
+
+        <button class="primary-btn" id="btn-verify-login" onclick="verifyAndLogin()">
+          <span data-i18n="btn_login_now">Verify & Enter Dashboard</span> ✓
+        </button>
+
+        <button class="secondary-btn" onclick="backToPhoneStep()" data-i18n="btn_change_phone">
+          Change Mobile Number
+        </button>
+      </div>
+    </div>
+
+    <!-- Mode 2: Kisan ID / Aadhaar -->
+    <div class="form-card hidden" id="pane-kisan">
+      <div class="field">
+        <label data-i18n="lbl_kisan_id">KISAN REGISTRATION NUMBER / AADHAAR</label>
+        <input type="text" id="input-kisan" placeholder="e.g. TN-88291 or 12-digit Aadhaar" style="width:100%;padding:13px;border:1.5px solid #bfcabe;border-radius:12px;font-size:14px;outline:none">
+      </div>
+      <div class="field">
+        <label data-i18n="lbl_pin">SECURITY MPIN / PASSCODE</label>
+        <input type="password" id="input-pin" placeholder="••••" maxlength="4" style="width:100%;padding:13px;border:1.5px solid #bfcabe;border-radius:12px;font-size:16px;outline:none;letter-spacing:3px">
+      </div>
+
+      <button class="primary-btn" onclick="loginWithKisanId()">
+        <span data-i18n="btn_sign_in_id">Sign In with Kisan ID</span> →
+      </button>
+    </div>
+
+    <!-- Quick Demo Helper Note -->
+    <div class="demo-credential-box">
+      <span style="font-size:18px">💡</span>
+      <div>
+        <b data-i18n="demo_badge">Demo Mode Credentials</b>
+        <p style="margin:3px 0 0;color:#355338" data-i18n="demo_desc">Phone: <b>9876543210</b> · OTP: <b>123456</b> or auto-fills directly for immediate access.</p>
+      </div>
+    </div>
+
+    <!-- Bottom Helpdesk & Registration Strip -->
+    <div class="help-strip">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:8px" data-i18n="not_registered_text">New farmer without an active mandi token?</p>
+      <a href="tel:18004190900">
+        <span>📞</span> <span data-i18n="call_helpline">Toll-Free Kisan Desk: 1800-419-0900</span>
+      </a>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Language Selection Modal -->
+<div id="lang-modal" class="modal-backdrop hidden">
+  <div class="lang-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div>
+        <h3 data-i18n="select_language_title">Select Language / भाषा चुनें</h3>
+        <small style="color:var(--muted)" data-i18n="select_language_sub">Choose your regional dialect for voice & text</small>
+      </div>
+      <button class="close-btn" id="close-lang-modal">✕</button>
+    </div>
+    <div class="lang-grid" id="lang-options"></div>
+  </div>
+</div>
+
+<script>
+/**
+ * Multi-Language Dictionary synchronized with Farm2Mart main application
+ */
+const I18N = {
+  en: {
+    tagline: "Kisan Procurement Portal",
+    badge_gov: "GOVERNMENT VERIFIED PORTAL",
+    login_title: "Farmer Sign In",
+    login_subtitle: "Access your direct MSP sales passes, grain quality reports, and DBT bank disbursements.",
+    tab_otp: "Mobile OTP",
+    tab_kisan_id: "Kisan / Aadhaar ID",
+    lbl_mobile_number: "REGISTERED MOBILE NUMBER",
+    mobile_hint: "We will send a 6-digit verification code via SMS.",
+    btn_get_otp: "Get Verification Code",
+    lbl_enter_otp: "ENTER 6-DIGIT OTP",
+    btn_resend: "Resend OTP",
+    btn_login_now: "Verify & Enter Dashboard",
+    btn_change_phone: "Change Mobile Number",
+    lbl_kisan_id: "KISAN REGISTRATION NUMBER / AADHAAR",
+    lbl_pin: "SECURITY MPIN / PASSCODE",
+    btn_sign_in_id: "Sign In with Kisan ID",
+    demo_badge: "Demo Mode Credentials",
+    demo_desc: "Phone: 9876543210 · OTP: 123456 (auto-populates for test drive).",
+    not_registered_text: "New farmer without an active mandi token?",
+    call_helpline: "Toll-Free Kisan Desk: 1800-419-0900",
+    otp_sent_toast: "OTP sent to mobile successfully! (Demo OTP: 123456)",
+    login_success: "Login successful! Welcome back, Ramesh.",
+    btn_sign_out: "Sign Out",
+    btn_sign_in: "Sign In",
+    nav_login: "Account",
+    lbl_select_centre: "SELECT PROCUREMENT CENTRE",
+    lbl_choose_timing: "CHOOSE TIME SLOT / TIMING",
+    lbl_select_timing_dropdown: "OR SELECT TIMING FROM LIST",
+    selected_timing_label: "SELECTED TIMING",
+    btn_change_timing: "🕒 Change Timing",
+    btn_update_timing: "Update Procurement Timing",
+    timing_updated_toast: "Procurement timing updated successfully!",
+    lang_name: 'English',
+    lang_native: 'English',
+    dashboard_title: 'Farmer Dashboard',
+    book_title: 'Book Procurement Slot',
+    track_title: 'Produce & Payment Tracker',
+    support_title: 'Kisan Support & Helpdesk',
+    welcome_back: 'WELCOME BACK',
+    greeting: 'Namaste, Ramesh',
+    badge_active: '● Active',
+    farmer_location: '📍 Perungudi Village, Tamil Nadu · ID: TN-88291',
+    total_sold: 'TOTAL SOLD',
+    disbursed: 'DISBURSED',
+    passes: 'PASSES',
+    valid_count: '01 Valid',
+    support_strip_title: 'FARMER DESK SUPPORT · TOLL-FREE',
+    support_strip_desc: 'SMS alerts, helpline 1800-419-0900, or your nearest CSC Kendra.',
+    msp_rates_title: "Today's Mandi MSP Rates",
+    live_sync: 'Live Sync',
+    crop_wheat: 'WHEAT',
+    crop_paddy: 'PADDY',
+    crop_cotton: 'COTTON',
+    per_quintal: 'per quintal',
+    steady: 'Steady',
+    pass_section_title: 'Your procurement pass',
+    manage_pass: 'Manage',
+    pass_badge: '✓ CONFIRMED GATE BOOKING',
+    depot_location: 'DEPOT LOCATION',
+    slot_window: '◷ SLOT WINDOW',
+    today_tomorrow: 'Tomorrow',
+    commodity_volume: '▣ COMMODITY & VOL',
+    paddy_crop: 'Paddy',
+    queue_low: 'Low wait time · ~15 mins',
+    gate_accepting: 'Gate is accepting arrivals',
+    btn_track_produce: 'Track produce & payment',
+    book_slot_title: 'Book a procurement slot',
+    book_slot_subtitle: 'Choose a crop, centre and time. Low crowd times are recommended.',
+    lbl_select_crop: 'SELECT CROP',
+    lbl_procurement_date: 'PROCUREMENT DATE',
+    lbl_estimated_qty: 'ESTIMATED QUANTITY (KG)',
+    lbl_choose_slot: 'CHOOSE A CENTRE & SLOT',
+    crowd_low: 'LOW CROWD',
+    crowd_mod: 'MODERATE',
+    crowd_high: 'HIGH DELAY',
+    btn_confirm_slot: 'Confirm procurement slot',
+    btn_save_return: 'Save and return home',
+    btn_close: 'Close',
+    stage_1_title: 'Slot booked',
+    stage_1_desc: 'Your digital gate pass is confirmed.',
+    stage_2_title: 'Arrival & weigh-in',
+    stage_2_desc: 'Vehicle entry verified at Weighbridge Bay 04.',
+    stage_3_title: 'Quality check in progress',
+    stage_3_desc: 'Moisture (14.2%) and purity assaying underway.',
+    stage_4_title: 'Payment disbursal',
+    stage_4_desc: 'DBT payment sent directly to linked bank account.',
+    btn_simulate_stage: '⚡ Advance Stage (Demo Simulation)',
+    sms_notice: 'You will receive an SMS alert when the quality assaying and DBT disbursal are complete.',
+    support_page_title: 'Kisan Support & Redressal',
+    support_hero_title: '24/7 Mandi Helpline',
+    support_hero_subtitle: 'Direct officer assistance in your native language',
+    register_grievance_title: 'Register a Grievance',
+    grievance_sub: 'Escalations are reviewed by the District Procurement Director.',
+    lbl_category: 'ISSUE CATEGORY',
+    cat_payment: 'Payment / DBT Disbursal Delay',
+    cat_quality: 'Grain Quality & Moisture Dispute',
+    cat_slot: 'Slot Reservation & Gate Entry',
+    cat_staff: 'Staff Assistance / Behavior',
+    cat_other: 'Other Inquiry',
+    lbl_description: 'EXPLAIN YOUR CONCERN',
+    btn_submit_grievance: 'Submit Grievance Ticket',
+    nav_home: 'Home',
+    nav_book: 'Book slot',
+    nav_track: 'Track status',
+    nav_support: 'Support',
+    select_language_title: 'Select Language / भाषा चुनें',
+    select_language_sub: 'Choose your regional dialect for voice & text',
+    rates_synced: 'Mandi MSP rates synced live with Ministry of Agriculture'
+  },
+  hi: {
+    tagline: "किसान खरीद पोर्टल",
+    badge_gov: "सरकारी प्रमाणित पोर्टल",
+    login_title: "किसान लॉगिन",
+    login_subtitle: "अपने एमएसपी गेट पास, नमी रिपोर्ट और डीबीटी बैंक खाते की स्थिति देखें।",
+    tab_otp: "मोबाइल ओटीपी",
+    tab_kisan_id: "किसान / आधार आईडी",
+    lbl_mobile_number: "पंजीकृत मोबाइल नंबर",
+    mobile_hint: "हम आपके मोबाइल पर 6 अंकों का ओटीपी भेजेंगे।",
+    btn_get_otp: "ओटीपी प्राप्त करें",
+    lbl_enter_otp: "6 अंकों का ओटीपी दर्ज करें",
+    btn_resend: "पुनः ओटीपी भेजें",
+    btn_login_now: "सत्यापित करें व प्रवेश करें",
+    btn_change_phone: "मोबाइल नंबर बदलें",
+    lbl_kisan_id: "किसान पंजीकरण संख्या / आधार",
+    lbl_pin: "सुरक्षा एमपिन",
+    btn_sign_in_id: "किसान आईडी से लॉगिन करें",
+    demo_badge: "डेमो क्रेडेंशियल",
+    demo_desc: "फोन: 9876543210 · ओटीपी: 123456 (जांच हेतु स्वतः भरें)।",
+    not_registered_text: "क्या आप नए किसान हैं?",
+    call_helpline: "टोल-फ्री किसान हेल्पलाइन: 1800-419-0900",
+    otp_sent_toast: "ओटीपी सफलतापूर्वक भेजा गया! (डेमो कोड: 123456)",
+    login_success: "सफलतापूर्वक लॉगिन हुआ! स्वागत है, रमेश जी।",
+    btn_sign_out: "लॉग आउट",
+    btn_sign_in: "साइन इन",
+    nav_login: "खाता",
+    lbl_select_centre: "खरीद केंद्र चुनें",
+    lbl_choose_timing: "समय स्लॉट / समय चुनें",
+    lbl_select_timing_dropdown: "या सूची से समय चुनें",
+    selected_timing_label: "चुना गया समय",
+    btn_change_timing: "🕒 समय बदलें",
+    btn_update_timing: "खरीद समय अपडेट करें",
+    timing_updated_toast: "खरीद का समय सफलतापूर्वक अपडेट किया गया!",
+    lang_name: 'Hindi',
+    lang_native: 'हिन्दी',
+    dashboard_title: 'किसान डैशबोर्ड',
+    book_title: 'खरीद स्लॉट बुक करें',
+    track_title: 'उपज एवं भुगतान ट्रैकर',
+    support_title: 'किसान सहायता केंद्र',
+    welcome_back: 'स्वागत है',
+    greeting: 'नमस्ते, रमेश जी',
+    badge_active: '● सक्रिय',
+    farmer_location: '📍 पेरुंगुडी गांव, तमिलनाडु · किसान आईडी: TN-88291',
+    total_sold: 'कुल विक्रय',
+    disbursed: 'प्राप्त भुगतान',
+    passes: 'सक्रिय पास',
+    valid_count: '01 वैध',
+    support_strip_title: 'किसान सहायता डेस्क · टोल-फ्री',
+    support_strip_desc: 'एसएमएस अलर्ट, हेल्पलाइन 1800-419-0900 या नजदीकी सीएससी केंद्र।',
+    msp_rates_title: 'आज के मंडी एमएसपी भाव',
+    live_sync: 'ताजा भाव',
+    crop_wheat: 'गेहूं',
+    crop_paddy: 'धान',
+    crop_cotton: 'कपास',
+    per_quintal: 'प्रति क्विंटल',
+    steady: 'स्थिर',
+    pass_section_title: 'आपका खरीद गेट पास',
+    manage_pass: 'प्रबंधन',
+    pass_badge: '✓ कन्फर्म गेट बुकिंग',
+    depot_location: 'मंडी केंद्र का पता',
+    slot_window: '◷ स्लॉट समय',
+    today_tomorrow: 'कल',
+    commodity_volume: '▣ फसल एवं मात्रा',
+    paddy_crop: 'धान (ग्रेड A)',
+    queue_low: 'कम भीड़ · ~15 मिनट प्रतीक्षा',
+    gate_accepting: 'गेट पर प्रवेश चालू है',
+    btn_track_produce: 'उपज और भुगतान ट्रैक करें',
+    book_slot_title: 'खरीद स्लॉट बुक करें',
+    book_slot_subtitle: 'फसल, केंद्र और समय चुनें। कम भीड़ वाले समय की सिफारिश की जाती है।',
+    lbl_select_crop: 'फसल का चयन करें',
+    lbl_procurement_date: 'खरीद की तारीख',
+    lbl_estimated_qty: 'अनुमानित वजन (किलो)',
+    lbl_choose_slot: 'मंडी केंद्र व समय चुनें',
+    crowd_low: 'कम भीड़',
+    crowd_mod: 'मध्यम भीड़',
+    crowd_high: 'लंबी कतार',
+    btn_confirm_slot: 'स्लॉट कन्फर्म व टोकन जारी करें',
+    btn_save_return: 'सुरक्षित करें और होम जाएं',
+    btn_close: 'बंद करें',
+    stage_1_title: 'स्लॉट बुक हुआ',
+    stage_1_desc: 'डिजिटल गेट पास कन्फर्म हो चुका है।',
+    stage_2_title: 'मंडी आगमन व प्रथम तौल',
+    stage_2_desc: 'वेब्रिज बे 04 पर सकल वजन दर्ज हुआ।',
+    stage_3_title: 'गुणवत्ता व नमी जांच',
+    stage_3_desc: 'नमी (14.2%) व ग्रेडिंग लैब में जारी है।',
+    stage_4_title: 'डीबीटी बैंक भुगतान',
+    stage_4_desc: 'राशि सीधे आधार लिंक बैंक खाते में भेजी जाएगी।',
+    btn_simulate_stage: '⚡ अगला चरण बढ़ाएं (डेमो सिमुलेशन)',
+    sms_notice: 'गुणवत्ता परीक्षण व भुगतान पूरा होने पर आपको एसएमएस प्राप्त होगा।',
+    support_page_title: 'किसान सहायता एवं शिकायत निवारण',
+    support_hero_title: '24/7 मंडी हेल्पलाइन',
+    support_hero_subtitle: 'अपनी मातृभाषा में सीधे मंडी अधिकारी से बात करें',
+    register_grievance_title: 'शिकायत दर्ज करें',
+    grievance_sub: 'सभी शिकायतों की निगरानी जिला खरीद अधिकारी द्वारा की जाती है।',
+    lbl_category: 'समस्या की श्रेणी',
+    cat_payment: 'भुगतान / डीबीटी में देरी',
+    cat_quality: 'अनाज गुणवत्ता व नमी विवाद',
+    cat_slot: 'स्लॉट बुकिंग व गेट एंट्री',
+    cat_staff: 'कर्मचारी व्यवहार / सहायता',
+    cat_other: 'अन्य पूछताछ',
+    lbl_description: 'अपनी समस्या का विवरण दें',
+    btn_submit_grievance: 'शिकायत टिकट सबमिट करें',
+    nav_home: 'होम',
+    nav_book: 'स्लॉट बुक',
+    nav_track: 'ट्रैक स्थिति',
+    nav_support: 'सहायता',
+    select_language_title: 'भाषा चुनें',
+    select_language_sub: 'स्क्रीन एवं सूचनाओं के लिए अपनी क्षेत्रीय भाषा चुनें',
+    rates_synced: 'कृषि मंत्रालय के लाइव एमएसपी भाव अपडेट हो गए हैं'
+  },
+  ta: {
+    tagline: "உழவர் நேரடி கொள்முதல் தளம்",
+    badge_gov: "அரசு அங்கீகரிக்கப்பட்ட தளம்",
+    login_title: "விவசாயி உள்நுழைவு",
+    login_subtitle: "உங்கள் நேரடி கொள்முதல் அனுமதி சீட்டு மற்றும் நேரடி வங்கி வரவு நிலையை அறியவும்.",
+    tab_otp: "மொபைல் OTP",
+    tab_kisan_id: "உழவர் அட்டை / ஆதார்",
+    lbl_mobile_number: "பதிவு செய்யப்பட்ட கைபேசி எண்",
+    mobile_hint: "உங்கள் கைபேசிக்கு 6 இலக்க சரிபார்ப்பு குறியீடு அனுப்பப்படும்.",
+    btn_get_otp: "சரிபார்ப்புக் குறியீடு பெறுக",
+    lbl_enter_otp: "6 இலக்க OTP-யை உள்ளிடவும்",
+    btn_resend: "மீண்டும் அனுப்புக",
+    btn_login_now: "சரிபார்த்து உள்நுழையவும்",
+    btn_change_phone: "எண்ணை மாற்றவும்",
+    lbl_kisan_id: "உழவர் அடையாள எண் / ஆதார்",
+    lbl_pin: "பாதுகாப்பு கடவுச்சொல்",
+    btn_sign_in_id: "அடையாள எண்ணுடன் நுழைக",
+    demo_badge: "மாதிரி உள்நுழைவு விவரம்",
+    demo_desc: "எண்: 9876543210 · OTP: 123456 (பரிசோதனைக்கு தானாக நிரப்பப்படும்).",
+    not_registered_text: "புதிய விவசாயியா?",
+    call_helpline: "கட்டணமில்லா உழவர் உதவி எண்: 1800-419-0900",
+    otp_sent_toast: "OTP வெற்றிகரமாக அனுப்பப்பட்டது! (குறியீடு: 123456)",
+    login_success: "வெற்றிகரமாக உள்நுழைந்தது! வணக்கம், ரமேஷ்.",
+    btn_sign_out: "வெளியேறு",
+    btn_sign_in: "உள்நுழைக",
+    nav_login: "கணக்கு",
+    lbl_select_centre: "கொள்முதல் மையத்தைத் தேர்ந்தெடுக்கவும்",
+    lbl_choose_timing: "நேர இடைவெளியைத் தேர்ந்தெடுக்கவும்",
+    lbl_select_timing_dropdown: "அல்லது பட்டியலிலிருந்து நேரத்தைத் தேர்ந்தெடுக்கவும்",
+    selected_timing_label: "தேர்ந்தெடுக்கப்பட்ட நேரம்",
+    btn_change_timing: "🕒 நேரத்தை மாற்றவும்",
+    btn_update_timing: "கொள்முதல் நேரத்தை புதுப்பிக்கவும்",
+    timing_updated_toast: "கொள்முதல் நேரம் வெற்றிகரமாக மாற்றப்பட்டது!",
+    lang_name: 'Tamil',
+    lang_native: 'தமிழ்',
+    dashboard_title: 'விவசாயி முகப்பு',
+    book_title: 'கொள்முதல் முன்பதிவு',
+    track_title: 'தானிய வரவு & பணம் கண்காணிப்பு',
+    support_title: 'உழவர் உதவி மையம்',
+    welcome_back: 'மீண்டும் நல்வரவு',
+    greeting: 'வணக்கம், ரமேஷ்',
+    badge_active: '● செயலில்',
+    farmer_location: '📍 பெருங்குடி கிராமம், தமிழ்நாடு · எண்: TN-88291',
+    total_sold: 'மொத்த விற்பனை',
+    disbursed: 'பட்டுவாடா',
+    passes: 'அனுமதி சீட்டு',
+    valid_count: '01 செல்லுபடியாகும்',
+    support_strip_title: 'விவசாயிகள் உதவி மையம் · கட்டணமில்லா எண்',
+    support_strip_desc: 'எஸ்எம்எஸ் தகவல், கட்டணமில்லா எண் 1800-419-0900, அல்லது இ-சேவை மையம்.',
+    msp_rates_title: 'இன்றைய நேரடி கொள்முதல் விலை (MSP)',
+    live_sync: 'நேரலை புதுப்பிப்பு',
+    crop_wheat: 'கோதுமை',
+    crop_paddy: 'நெல்',
+    crop_cotton: 'பருத்தி',
+    per_quintal: 'குவிண்டால்',
+    steady: 'மாற்றமில்லை',
+    pass_section_title: 'உங்கள் கொள்முதல் நுழைவுச்சீட்டு',
+    manage_pass: 'மாற்றியமைக்க',
+    pass_badge: '✓ உறுதிசெய்யப்பட்ட நுழைவுச்சீட்டு',
+    depot_location: 'கொள்முதல் நிலைய முகவரி',
+    slot_window: '◷ ஒதுக்கீட்டு நேரம்',
+    today_tomorrow: 'நாளை',
+    commodity_volume: '▣ பயிர் & எடை',
+    paddy_crop: 'நெல் (தரம் A)',
+    queue_low: 'குறைந்த காத்திருப்பு நேரம் · ~15 நிமிடம்',
+    gate_accepting: 'வாகன நுழைவு அனுமதிக்கப்படுகிறது',
+    btn_track_produce: 'நிலையை நேரலையில் கண்காணிக்க',
+    book_slot_title: 'கொள்முதல் நேரத்தை முன்பதிவு செய்க',
+    book_slot_subtitle: 'பயிர், மையம் மற்றும் நேரத்தைத் தேர்வுசெய்யவும்.',
+    lbl_select_crop: 'பயிரைத் தேர்ந்தெடுக்கவும்',
+    lbl_procurement_date: 'கொள்முதல் தேதி',
+    lbl_estimated_qty: 'எதிர்பார்க்கப்படும் எடை (கிலோ)',
+    lbl_choose_slot: 'மையம் & நேரத்தைத் தேர்ந்தெடுக்கவும்',
+    crowd_low: 'குறைந்த கூட்டம்',
+    crowd_mod: 'மிதமான கூட்டம்',
+    crowd_high: 'அதிக கூட்டம்',
+    btn_confirm_slot: 'டோக்கனை உறுதிசெய்து உருவாக்கவும்',
+    btn_save_return: 'சேமித்து முகப்புக்குச் செல்லவும்',
+    btn_close: 'மூடுக',
+    stage_1_title: 'முன்பதிவு முடிந்தது',
+    stage_1_desc: 'டிஜிட்டல் நுழைவு டோக்கன் வழங்கப்பட்டது.',
+    stage_2_title: 'வருகை & முதல் எடை சோதனை',
+    stage_2_desc: 'வே பிரிட்ஜ் 4-ல் மொத்த எடை பதிவு செய்யப்பட்டது.',
+    stage_3_title: 'ஈரப்பதம் & தர பரிசோதனை',
+    stage_3_desc: 'ஈரப்பதம் 14.2% ஆய்வுக்கூடத்தில் சரிபார்க்கப்படுகிறது.',
+    stage_4_title: 'நேரடி வங்கி பணப்பரிமாற்றம் (DBT)',
+    stage_4_desc: 'தொகை உங்கள் வங்கிக் கணக்கில் வரவு வைக்கப்படும்.',
+    btn_simulate_stage: '⚡ அடுத்த நிலைக்கு நகர்த்துக (மாதிரி செயல்முறை)',
+    sms_notice: 'தரப் பரிசோதனை மற்றும் பணப் பரிமாற்றம் முடிந்ததும் எஸ்எம்எஸ் அனுப்பப்படும்.',
+    support_page_title: 'உழவர் உதவி மற்றும் குறைதீர்ப்பு',
+    support_hero_title: '24/7 நேரடி உதவி எண்',
+    support_hero_subtitle: 'உங்கள் தாய்மொழியில் அதிகாரிகளிடம் நேரடியாகப் பேசுங்கள்',
+    register_grievance_title: 'புகார் பதிவு செய்க',
+    grievance_sub: 'மாவட்ட கொள்முதல் அதிகாரி உங்கள் புகாரை நேரடியாக கவனிப்பார்.',
+    lbl_category: 'புகார் பிரிவு',
+    cat_payment: 'பணம் / DBT பட்டுவாடா தாமதம்',
+    cat_quality: 'தானிய தரம் & ஈரப்பதம் சர்ச்சை',
+    cat_slot: 'முன்பதிவு & கேட் நுழைவு பிரச்சனை',
+    cat_staff: 'ஊழியர் உதவி / நடத்தை',
+    cat_other: 'இதர விசாரணைகள்',
+    lbl_description: 'விவரங்களை உள்ளிடவும்',
+    btn_submit_grievance: 'புகாரை சமர்ப்பிக்கவும்',
+    nav_home: 'முகப்பு',
+    nav_book: 'முன்பதிவு',
+    nav_track: 'கண்காணிப்பு',
+    nav_support: 'உதவி',
+    select_language_title: 'மொழியைத் தேர்ந்தெடுக்கவும்',
+    select_language_sub: 'திரை மற்றும் குரல் அறிவிப்புகளுக்கு மொழியை மாற்றவும்',
+    rates_synced: 'மத்திய அரசு கொள்முதல் விலை வெற்றிகரமாக புதுப்பிக்கப்பட்டது'
+  },
+  te: {
+    tagline: "రైతు సేకరణ పోర్టల్",
+    badge_gov: "ప్రభుత్వ ధృవీకృత పోర్టల్",
+    login_title: "రైతు లాగిన్",
+    login_subtitle: "మీ సేకరణ గేట్ పాస్‌లు మరియు DBT బ్యాంక్ చెల్లింపు వివరాలను తనిఖీ చేయండి.",
+    tab_otp: "మొబైల్ OTP",
+    tab_kisan_id: "కిసాన్ / ఆధార్ ID",
+    lbl_mobile_number: "నమోదిత మొబైల్ నంబర్",
+    mobile_hint: "మీ నంబర్‌కు 6 అంకెల OTP కోడ్ పంపబడుతుంది.",
+    btn_get_otp: "OTP కోడ్ పొందండి",
+    lbl_enter_otp: "6 అంకెల OTP నమోదు చేయండి",
+    btn_resend: "మళ్లీ పంపండి",
+    btn_login_now: "ధృవీకరించి లాగిన్ అవ్వండి",
+    btn_change_phone: "మొబైల్ నంబర్ మార్చండి",
+    lbl_kisan_id: "కిసాన్ రిజిస్ట్రేషన్ నంబర్ / ఆధార్",
+    lbl_pin: "సెక్యూరిటీ పిన్",
+    btn_sign_in_id: "కిసాన్ ID తో ప్రవేశించండి",
+    demo_badge: "డెమో వివరాలు",
+    demo_desc: "ఫోన్: 9876543210 · OTP: 123456.",
+    not_registered_text: "కొత్త రైతా?",
+    call_helpline: "రైతు హెల్ప్‌లైన్: 1800-419-0900",
+    otp_sent_toast: "OTP పంపబడింది! (డెమో కోడ్: 123456)",
+    login_success: "విజయవంతంగా లాగిన్ అయ్యారు! నమస్కారం, రమేష్ గారు.",
+    btn_sign_out: "లాగ్ అవుట్",
+    btn_sign_in: "సైన్ ఇన్",
+    nav_login: "ఖాతా",
+    lbl_select_centre: "సేకరణ కేంద్రాన్ని ఎంచుకోండి",
+    lbl_choose_timing: "సమయ స్లాట్‌ను ఎంచుకోండి",
+    lbl_select_timing_dropdown: "లేదా జాబితా నుండి సమయాన్ని ఎంచుకోండి",
+    selected_timing_label: "ఎంచుకున్న సమయం",
+    btn_change_timing: "🕒 సమయాన్ని మార్చండి",
+    btn_update_timing: "సేకరణ సమయాన్ని నవీకరించండి",
+    timing_updated_toast: "సేకరణ సమయం విజయవంతంగా నవీకరించబడింది!",
+    lang_name: 'Telugu',
+    lang_native: 'తెలుగు',
+    dashboard_title: 'రైతు డాష్‌బోర్డ్',
+    book_title: 'సేకరణ స్లాట్ బుకింగ్',
+    track_title: 'ధాన్యం & చెల్లింపు ట్రాకర్',
+    support_title: 'రైతు మద్దతు కేంద్రం',
+    welcome_back: 'స్వాగతం',
+    greeting: 'నమస్కారం, రమేష్ గారు',
+    badge_active: '● యాక్టివ్',
+    farmer_location: '📍 పెరుంగుడి గ్రామం, తమిళనాడు · ID: TN-88291',
+    total_sold: 'మొత్తం అమ్మకం',
+    disbursed: 'చెల్లించిన మొత్తం',
+    passes: 'పాస్‌లు',
+    valid_count: '01 చెల్లుబాటు',
+    support_strip_title: 'రైతు డెస్క్ మద్దతు · టోల్ ఫ్రీ',
+    support_strip_desc: 'SMS హెచ్చరికలు, హెల్ప్‌లైన్ 1800-419-0900 లేదా సమీప CSC కేంద్రం.',
+    msp_rates_title: 'నేటి మార్కెట్ MSP ధరలు',
+    live_sync: 'తాజా ధరలు',
+    crop_wheat: 'గోధుమలు',
+    crop_paddy: 'వరి (ధాన్యం)',
+    crop_cotton: 'పత్తి',
+    per_quintal: 'క్వింటాల్‌కు',
+    steady: 'స్థిరంగా',
+    pass_section_title: 'మీ సేకరణ గేట్ పాస్',
+    manage_pass: 'నిర్వహించండి',
+    pass_badge: '✓ కన్ఫర్మ్ అయిన గేట్ బుకింగ్',
+    depot_location: 'డిపో చిరునామా',
+    slot_window: '◷ స్లాట్ సమయం',
+    today_tomorrow: 'రేపు',
+    commodity_volume: '▣ పంట & పరిమాణం',
+    paddy_crop: 'వరి ధాన్యం (గ్రేడ్ A)',
+    queue_low: 'తక్కువ వేచి ఉండే సమయం · ~15 నిమి',
+    gate_accepting: 'గేటు వద్ద ప్రవేశం మొదలైంది',
+    btn_track_produce: 'ధాన్యం స్థితిని ట్రాక్ చేయండి',
+    book_slot_title: 'కొనుగోలు స్లాట్ బుక్ చేయండి',
+    book_slot_subtitle: 'పంట, కేంద్రం మరియు సమయాన్ని ఎంచుకోండి.',
+    lbl_select_crop: 'పంటను ఎంచుకోండి',
+    lbl_procurement_date: 'సేకరణ తేదీ',
+    lbl_estimated_qty: 'అంచనా వేసిన బరువు (కిలోలు)',
+    lbl_choose_slot: 'కేంద్రం & స్లాట్ సమయం ఎంచుకోండి',
+    crowd_low: 'తక్కువ రద్దీ',
+    crowd_mod: 'మధ్యస్థ రద్దీ',
+    crowd_high: 'ఎక్కువ రద్దీ',
+    btn_confirm_slot: 'టోకెన్ కన్ఫర్మ్ చేయండి',
+    btn_save_return: 'సేవ్ చేసి హోమ్‌కి వెళ్లండి',
+    btn_close: 'మూసివేయండి',
+    stage_1_title: 'స్లాట్ బుక్ అయింది',
+    stage_1_desc: 'డిజిటల్ గేట్ పాస్ ధృవీకరించబడింది.',
+    stage_2_title: 'రాక & మొదటి తూకం',
+    stage_2_desc: 'వేబ్రిడ్జ్ బే 04 వద్ద స్థూల బరువు రికార్డ్ అయింది.',
+    stage_3_title: 'నాణ్యత & తేమ పరీక్ష',
+    stage_3_desc: 'తేమ 14.2% వద్ద ల్యాబ్‌లో తనిఖీ జరుగుతోంది.',
+    stage_4_title: 'DBT బ్యాంక్ చెల్లింపు',
+    stage_4_desc: 'మొత్తం మీ ఆధార్ లింక్డ్ బ్యాంక్ ఖాతాకు పంపబడుతుంది.',
+    btn_simulate_stage: '⚡ తదుపరి దశకు వెళ్లండి (డెమో)',
+    sms_notice: 'నాణ్యత పరీక్ష మరియు చెల్లింపు పూర్తయినప్పుడు మీకు SMS వస్తుంది.',
+    support_page_title: 'రైతు మద్దతు & ఫిర్యాదుల పరిష్కారం',
+    support_hero_title: '24/7 మండి హెల్ప్‌లైన్',
+    support_hero_subtitle: 'మీ మాతృభాషలో అధికారులతో మాట్లాడండి',
+    register_grievance_title: 'ఫిర్యాదు నమోదు చేయండి',
+    grievance_sub: 'జిల్లా సేకరణ అధికారి మీ సమస్యను సమీక్షిస్తారు.',
+    lbl_category: 'సమస్య వర్గం',
+    cat_payment: 'చెల్లింపు / DBT ఆలస్యం',
+    cat_quality: 'ధాన్యం నాణ్యత వివాదం',
+    cat_slot: 'స్లాట్ & గేట్ ప్రవేశ సమస్య',
+    cat_staff: 'సిబ్బంది ప్రవర్తన / సహాయం',
+    cat_other: 'ఇతర విచారణలు',
+    lbl_description: 'వివరాలు తెలియజేయండి',
+    btn_submit_grievance: 'ఫిర్యాదు సమర్పించండి',
+    nav_home: 'హోమ్',
+    nav_book: 'స్లాట్ బుకింగ్',
+    nav_track: 'ట్రాక్ స్థితి',
+    nav_support: 'మద్దతు',
+    select_language_title: 'భాషను ఎంచుకోండి',
+    select_language_sub: 'యాప్ ప్రదర్శన కోసం ప్రాంతీయ భాషను ఎంచుకోండి',
+    rates_synced: 'తాజా మార్కెట్ ధరలు అప్‌డేట్ చేయబడ్డాయి'
+  },
+  pa: {
+    tagline: "ਕਿਸਾਨ ਖਰੀਦ ਪੋਰਟਲ",
+    badge_gov: "ਸਰਕਾਰੀ ਤਸਦੀਕਸ਼ੁਦਾ ਪੋਰਟਲ",
+    login_title: "ਕਿਸਾਨ ਲੌਗਇਨ",
+    login_subtitle: "ਆਪਣੇ ਮੰਡੀ ਗੇਟ ਪਾਸ ਅਤੇ DBT ਬੈਂਕ ਭੁਗਤਾਨ ਦੀ ਸਥਿਤੀ ਦੇਖੋ।",
+    tab_otp: "ਮੋਬਾਈਲ OTP",
+    tab_kisan_id: "ਕਿਸਾਨ / ਆਧਾਰ ID",
+    lbl_mobile_number: "ਰਜਿਸਟਰਡ ਮੋਬਾਈਲ ਨੰਬਰ",
+    mobile_hint: "ਅਸੀਂ ਤੁਹਾਡੇ ਮੋਬਾਈਲ ਤੇ 6 ਅੰਕਾਂ ਦਾ ਕੋਡ ਭੇਜਾਂਗੇ।",
+    btn_get_otp: "OTP ਪ੍ਰਾਪਤ ਕਰੋ",
+    lbl_enter_otp: "6 ਅੰਕਾਂ ਦਾ ਕੋਡ ਦਰਜ ਕਰੋ",
+    btn_resend: "ਮੁੜ ਭੇਜੋ",
+    btn_login_now: "ਪੁਸ਼ਟੀ ਕਰੋ ਅਤੇ ਦਾਖਲ ਹੋਵੋ",
+    btn_change_phone: "ਨੰਬਰ ਬਦਲੋ",
+    lbl_kisan_id: "ਕਿਸਾਨ ਨੰਬਰ / ਆਧਾਰ",
+    lbl_pin: "ਸੁਰੱਖਿਆ ਪਿੰਨ",
+    btn_sign_in_id: "ਕਿਸਾਨ ID ਨਾਲ ਲੌਗਇਨ",
+    demo_badge: "ਡੈਮੋ ਵੇਰਵਾ",
+    demo_desc: "ਫੋਨ: 9876543210 · OTP: 123456.",
+    not_registered_text: "ਕੀ ਤੁਸੀਂ ਨਵੇਂ ਕਿਸਾਨ ਹੋ?",
+    call_helpline: "ਟੋਲ-ਫ੍ਰੀ ਹੈਲਪਲਾਈਨ: 1800-419-0900",
+    otp_sent_toast: "OTP ਭੇਜਿਆ ਗਿਆ! (ਕੋਡ: 123456)",
+    login_success: "ਸਫਲਤਾਪੂਰਵਕ ਲੌਗਇਨ! ਜੀ ਆਇਆਂ ਨੂੰ।",
+    btn_sign_out: "ਲਾਗ ਆਊਟ",
+    btn_sign_in: "ਸਾਈਨ ਇਨ",
+    nav_login: "ਖਾਤਾ",
+    lbl_select_centre: "ਖਰੀਦ ਕੇਂਦਰ ਚੁਣੋ",
+    lbl_choose_timing: "ਸਮਾਂ ਸਲਾਟ ਚੁਣੋ",
+    lbl_select_timing_dropdown: "ਜਾਂ ਸੂਚੀ ਵਿੱਚੋਂ ਸਮਾਂ ਚੁਣੋ",
+    selected_timing_label: "ਚੁਣਿਆ ਗਿਆ ਸਮਾਂ",
+    btn_change_timing: "🕒 ਸਮਾਂ ਬਦਲੋ",
+    btn_update_timing: "ਖਰੀਦ ਦਾ ਸਮਾਂ ਅੱਪਡੇਟ ਕਰੋ",
+    timing_updated_toast: "ਖਰੀਦ ਦਾ ਸਮਾਂ ਸਫਲਤਾਪੂਰਵਕ ਅੱਪਡੇਟ ਕੀਤਾ ਗਿਆ!",
+    lang_name: 'Punjabi',
+    lang_native: 'ਪੰਜਾਬੀ',
+    dashboard_title: 'ਕਿਸਾਨ ਡੈਸ਼ਬੋਰਡ',
+    book_title: 'ਖਰੀਦ ਸਲਾਟ ਬੁੱਕ ਕਰੋ',
+    track_title: 'ਫ਼ਸਲ ਅਤੇ ਭੁਗਤਾਨ ਟਰੈਕਰ',
+    support_title: 'ਕਿਸਾਨ ਸਹਾਇਤਾ ਕੇਂਦਰ',
+    welcome_back: 'ਜੀ ਆਇਆਂ ਨੂੰ',
+    greeting: 'ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ, ਰਮੇਸ਼ ਜੀ',
+    badge_active: '● ਸਰਗਰਮ',
+    farmer_location: '📍 ਪੇਰੂੰਗੁੜੀ ਪਿੰਡ, ਤਾਮਿਲਨਾਡੂ · ID: TN-88291',
+    total_sold: 'ਕੁੱਲ ਵਿਕਰੀ',
+    disbursed: 'ਜਾਰੀ ਭੁਗਤਾਨ',
+    passes: 'ਪਾਸ',
+    valid_count: '01 ਵੈਧ',
+    support_strip_title: 'ਕਿਸਾਨ ਸਹਾਇਤਾ ਡੈਸਕ · ਟੋਲ-ਫ੍ਰੀ',
+    support_strip_desc: 'SMS ਅਲਰਟ, ਹੈਲਪਲਾਈਨ 1800-419-0900, ਜਾਂ ਨੇੜਲਾ CSC ਕੇਂਦਰ।',
+    msp_rates_title: 'ਅੱਜ ਦੇ ਮੰਡੀ ਐਮਐਸਪੀ ਰੇਟ',
+    live_sync: 'ਤਾਜ਼ਾ ਰੇਟ',
+    crop_wheat: 'ਕਣਕ',
+    crop_paddy: 'ਝੋਨਾ',
+    crop_cotton: 'ਨਰਮਾ/ਕਪਾਹ',
+    per_quintal: 'ਪ੍ਰਤੀ ਕੁਇੰਟਲ',
+    steady: 'ਸਥਿਰ',
+    pass_section_title: 'ਤੁਹਾਡਾ ਗੇਟ ਪਾਸ',
+    manage_pass: 'ਪ੍ਰਬੰਧ ਕਰੋ',
+    pass_badge: '✓ ਪੁਸ਼ਟੀ ਕੀਤੀ ਗੇਟ ਬੁਕਿੰਗ',
+    depot_location: 'ਖਰੀਦ ਕੇਂਦਰ ਦਾ ਪਤਾ',
+    slot_window: '◷ ਸਲਾਟ ਸਮਾਂ',
+    today_tomorrow: 'ਕੱਲ੍ਹ',
+    commodity_volume: '▣ ਫਸਲ ਅਤੇ ਮਾਤਰਾ',
+    paddy_crop: 'ਝੋਨਾ (ਗ੍ਰੇਡ ਏ)',
+    queue_low: 'ਘੱਟ ਉਡੀਕ ਸਮਾਂ · ~15 ਮਿੰਟ',
+    gate_accepting: 'ਗੇਟ ਤੇ ਐਂਟਰੀ ਚਾਲੂ ਹੈ',
+    btn_track_produce: 'ਸਥਿਤੀ ਟ੍ਰੈਕ ਕਰੋ',
+    book_slot_title: 'ਖਰੀਦ ਸਲਾਟ ਬੁੱਕ ਕਰੋ',
+    book_slot_subtitle: 'ਫਸਲ, ਕੇਂਦਰ ਅਤੇ ਸਮਾਂ ਚੁਣੋ।',
+    lbl_select_crop: 'ਫਸਲ ਚੁਣੋ',
+    lbl_procurement_date: 'ਖਰੀਦ ਦੀ ਮਿਤੀ',
+    lbl_estimated_qty: 'ਅੰਦਾਜ਼ਨ ਮਾਤਰਾ (ਕਿਲੋ)',
+    lbl_choose_slot: 'ਕੇਂਦਰ ਅਤੇ ਸਮਾਂ ਚੁਣੋ',
+    crowd_low: 'ਘੱਟ ਭੀੜ',
+    crowd_mod: 'ਦਰਮਿਆਨੀ ਭੀੜ',
+    crowd_high: 'ਭਾਰੀ ਭੀੜ',
+    btn_confirm_slot: 'ਸਲਾਟ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ',
+    btn_save_return: 'ਸੰਭਾਲੋ ਅਤੇ ਵਾਪਸ ਜਾਓ',
+    btn_close: 'ਬੰਦ ਕਰੋ',
+    stage_1_title: 'ਸਲਾਟ ਬੁੱਕ ਹੋਇਆ',
+    stage_1_desc: 'ਡਿਜੀਟਲ ਗੇਟ ਪਾਸ ਜਾਰੀ ਹੋ ਗਿਆ ਹੈ।',
+    stage_2_title: 'ਆਮਦ ਅਤੇ ਪਹਿਲਾ ਤੋਲ',
+    stage_2_desc: 'ਕੰਡੇ ਤੇ ਗੱਡੀ ਦਾ ਕੁੱਲ ਵਜ਼ਨ ਦਰਜ ਹੋਇਆ।',
+    stage_3_title: 'ਗੁਣਵੱਤਾ ਅਤੇ ਨਮੀ ਦੀ ਜਾਂਚ',
+    stage_3_desc: 'ਨਮੀ (14.2%) ਲੈਬ ਵਿੱਚ ਜਾਂਚ ਅਧੀਨ ਹੈ।',
+    stage_4_title: 'DBT ਖਾਤੇ ਵਿੱਚ ਭੁਗਤਾਨ',
+    stage_4_desc: 'ਰਕਮ ਸਿੱਧੀ ਬੈਂਕ ਖਾਤੇ ਵਿੱਚ ਭੇਜੀ ਜਾਵੇਗੀ।',
+    btn_simulate_stage: '⚡ ਅਗਲਾ ਪੜਾਅ (ਡੈਮੋ)',
+    sms_notice: 'ਜਾਂਚ ਅਤੇ ਭੁਗਤਾਨ ਪੂਰਾ ਹੋਣ ਤੇ SMS ਭੇਜਿਆ ਜਾਵੇਗਾ।',
+    support_page_title: 'ਕਿਸਾਨ ਸਹਾਇਤਾ ਅਤੇ ਸ਼ਿਕਾਇਤ ਨਿਵਾਰਨ',
+    support_hero_title: '24/7 ਮੰਡੀ ਹੈਲਪਲਾਈਨ',
+    support_hero_subtitle: 'ਆਪਣੀ ਬੋਲੀ ਵਿੱਚ ਅਧਿਕਾਰੀਆਂ ਨਾਲ ਗੱਲ ਕਰੋ',
+    register_grievance_title: 'ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰੋ',
+    grievance_sub: 'ਸਾਰੀਆਂ ਸ਼ਿਕਾਇਤਾਂ ਜ਼ਿਲ੍ਹਾ ਖਰੀਦ ਅਫ਼ਸਰ ਵੱਲੋਂ ਦੇਖੀਆਂ ਜਾਂਦੀਆਂ ਹਨ।',
+    lbl_category: 'ਸ਼੍ਰੇਣੀ',
+    cat_payment: 'ਭੁਗਤਾਨ / DBT ਵਿੱਚ ਦੇਰੀ',
+    cat_quality: 'ਗੁਣਵੱਤਾ ਅਤੇ ਨਮੀ ਦਾ ਝਗੜਾ',
+    cat_slot: 'ਸਲਾਟ ਬੁਕਿੰਗ ਅਤੇ ਗੇਟ ਦਾ ਮਸਲਾ',
+    cat_staff: 'ਸਟਾਫ ਦਾ ਵਿਹਾਰ / ਮਦਦ',
+    cat_other: 'ਹੋਰ ਪੁੱਛਗਿੱਛ',
+    lbl_description: 'ਵੇਰਵਾ ਲਿਖੋ',
+    btn_submit_grievance: 'ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰੋ',
+    nav_home: 'ਹੋਮ',
+    nav_book: 'ਸਲਾਟ ਬੁੱਕ',
+    nav_track: 'ਟ੍ਰੈਕ ਸਥਿਤੀ',
+    nav_support: 'ਸਹਾਇਤਾ',
+    select_language_title: 'ਭਾਸ਼ਾ ਚੁਣੋ',
+    select_language_sub: 'ਆਪਣੀ ਮਨਪਸੰਦ ਭਾਸ਼ਾ ਚੁਣੋ',
+    rates_synced: 'ਮੰਡੀ ਦੇ ਤਾਜ਼ਾ ਭਾਅ ਅੱਪਡੇਟ ਹੋ ਗਏ ਹਨ'
+  },
+  mr: {
+    tagline: "शेतकरी खरेदी पोर्टल",
+    badge_gov: "शासकीय प्रमाणित पोर्टल",
+    login_title: "शेतकरी लॉगिन",
+    login_subtitle: "आपले हमीभाव खरेदी पास व DBT बँक जमा स्थिती तपासा.",
+    tab_otp: "मोबाईल OTP",
+    tab_kisan_id: "शेतकरी / आधार ID",
+    lbl_mobile_number: "नोंदणीकृत मोबाईल क्रमांक",
+    mobile_hint: "आपल्या मोबाईलवर 6 अंकी ओटीपी पाठवला जाईल.",
+    btn_get_otp: "ओटीपी मिळवा",
+    lbl_enter_otp: "6 अंकी ओटीपी टाका",
+    btn_resend: "पुन्हा पाठवा",
+    btn_login_now: "सत्यापित करून प्रवेश करा",
+    btn_change_phone: "नंबर बदला",
+    lbl_kisan_id: "शेतकरी नोंदणी क्रमांक / आधार",
+    lbl_pin: "सुरक्षा पिन",
+    btn_sign_in_id: "शेतकरी आयडीने लॉगिन करा",
+    demo_badge: "डेमो माहिती",
+    demo_desc: "मोबाईल: 9876543210 · OTP: 123456.",
+    not_registered_text: "नवीन शेतकरी आहात?",
+    call_helpline: "टोल-फ्री शेतकरी मदत कक्ष: 1800-419-0900",
+    otp_sent_toast: "ओटीपी पाठवला गेला! (कोड: 123456)",
+    login_success: "यशस्वी लॉगिन! नमस्कार, रमेश जी.",
+    btn_sign_out: "बाहेर पडा",
+    btn_sign_in: "साइन इन",
+    nav_login: "खाते",
+    lbl_select_centre: "खरेदी केंद्र निवडा",
+    lbl_choose_timing: "वेळ स्लॉट निवडा",
+    lbl_select_timing_dropdown: "किंवा यादीतून वेळ निवडा",
+    selected_timing_label: "निवडलेली वेळ",
+    btn_change_timing: "🕒 वेळ बदला",
+    btn_update_timing: "खरेदी वेळ अपडेट करा",
+    timing_updated_toast: "खरेदीची वेळ यशस्वीरित्या अपडेट केली!",
+    lang_name: 'Marathi',
+    lang_native: 'मराठी',
+    dashboard_title: 'शेतकरी डॅशबोर्ड',
+    book_title: 'खरेदी स्लॉट बुक करा',
+    track_title: 'धान्य व पेमेंट ट्रॅकर',
+    support_title: 'शेतकरी मदत केंद्र',
+    welcome_back: 'पुन्हा स्वागत आहे',
+    greeting: 'नमस्कार, रमेश जी',
+    badge_active: '● सक्रिय',
+    farmer_location: '📍 पेरुंगुडी गाव, तामिळनाडू · ID: TN-88291',
+    total_sold: 'एकूण विक्री',
+    disbursed: 'प्राप्त रक्कम',
+    passes: 'पास',
+    valid_count: '01 वैध',
+    support_strip_title: 'शेतकरी मदत कक्ष · टोल-फ्री',
+    support_strip_desc: 'एसएमएस अलर्ट, हेल्पलाइन 1800-419-0900 किंवा जवळचे सीएससी केंद्र.',
+    msp_rates_title: 'आजचे हमीभाव (MSP) दर',
+    live_sync: 'थेट भाव',
+    crop_wheat: 'गहू',
+    crop_paddy: 'भात (धान)',
+    crop_cotton: 'कापूस',
+    per_quintal: 'प्रति क्विंटल',
+    steady: 'स्थिर',
+    pass_section_title: 'आपला खरेदी गेट पास',
+    manage_pass: 'बदला',
+    pass_badge: '✓ कन्फर्म गेट बुकिंग',
+    depot_location: 'खरेदी केंद्र पत्ता',
+    slot_window: '◷ वेळ स्लॉट',
+    today_tomorrow: 'उद्या',
+    commodity_volume: '▣ पीक व प्रमाण',
+    paddy_crop: 'धान (ग्रेड A)',
+    queue_low: 'कमी गर्दी · ~15 मिनिटे प्रतीक्षा',
+    gate_accepting: 'गेटवर प्रवेश सुरू आहे',
+    btn_track_produce: 'स्थिती तपासा',
+    book_slot_title: 'खरेदी स्लॉट बुक करा',
+    book_slot_subtitle: 'पीक, केंद्र व सोयीची वेळ निवडा.',
+    lbl_select_crop: 'पीक निवडा',
+    lbl_procurement_date: 'खरेदी तारीख',
+    lbl_estimated_qty: 'अंदाजे वजन (किलो)',
+    lbl_choose_slot: 'केंद्र व वेळ स्लॉट निवडा',
+    crowd_low: 'कमी गर्दी',
+    crowd_mod: 'मध्यम गर्दी',
+    crowd_high: 'जास्त गर्दी',
+    btn_confirm_slot: 'स्लॉट निश्चित करा',
+    btn_save_return: 'जतन करून होमवर जा',
+    btn_close: 'बंद करा',
+    stage_1_title: 'स्लॉट बुक झाला',
+    stage_1_desc: 'डिजिटल गेट पास निश्चित झाला आहे.',
+    stage_2_title: 'आगमन व प्रथम वजन',
+    stage_2_desc: 'काट्यावर वाहनाचे एकूण वजन नोंदवले गेले.',
+    stage_3_title: 'गुणवत्ता व आर्द्रता तपासणी',
+    stage_3_desc: 'आर्द्रता 14.2% लॅबमध्ये तपासली जात आहे.',
+    stage_4_title: 'DBT बँक खात्यात जमा',
+    stage_4_desc: 'रक्कम थेट आधार लिंक खात्यात जमा होईल.',
+    btn_simulate_stage: '⚡ पुढील टप्पा (डेमो)',
+    sms_notice: 'तपासणी व पेमेंट पूर्ण झाल्यावर आपल्याला एसएमएस येईल.',
+    support_page_title: 'शेतकरी तक्रार निवारण कक्ष',
+    support_hero_title: '24/7 मंडी हेल्पलाइन',
+    support_hero_subtitle: 'आपल्या भाषेत थेट अधिकाऱ्यांशी संवाद साधा',
+    register_grievance_title: 'तक्रार नोंदवा',
+    grievance_sub: 'जिल्हा खरेदी अधिकारी तक्रारीचे निवारण करतील.',
+    lbl_category: 'तक्रार प्रकार',
+    cat_payment: 'पेमेंट / DBT मध्ये उशीर',
+    cat_quality: 'धान्य प्रत व आर्द्रता वाद',
+    cat_slot: 'स्लॉट व गेट प्रवेश अडचण',
+    cat_staff: 'कर्मचारी मदत / वागणूक',
+    cat_other: 'इतर माहिती',
+    lbl_description: 'तपशील लिहा',
+    btn_submit_grievance: 'तक्रार सादर करा',
+    nav_home: 'होम',
+    nav_book: 'स्लॉट बुक',
+    nav_track: 'ट्रॅक स्थिती',
+    nav_support: 'मदत',
+    select_language_title: 'भाषा निवडा',
+    select_language_sub: 'ॲपसाठी आपली प्रादेशिक भाषा निवडा',
+    rates_synced: 'मंडी दर थेट अपडेट झाले आहेत'
+  },
+  bn: {
+    tagline: "কৃষক সংগ্রহ পোর্টাল",
+    badge_gov: "সরকারি অনুমোদিত পোর্টাল",
+    login_title: "কৃষক লগইন",
+    login_subtitle: "আপনার সরাসরি ক্রয় পাস এবং ডিবিটি ব্যাংক জমার বিবরণ পরীক্ষা করুন।",
+    tab_otp: "মোবাইল ওটিপি",
+    tab_kisan_id: "কিষাণ / আধার আইডি",
+    lbl_mobile_number: "নিবন্ধিত মোবাইল নম্বর",
+    mobile_hint: "আপনার মোবাইলে ৬-সংখ্যার যাচাইকরণ কোড পাঠানো হবে।",
+    btn_get_otp: "ওটিপি পান",
+    lbl_enter_otp: "৬-সংখ্যার ওটিপি লিখুন",
+    btn_resend: "পুনরায় ওটিপি পাঠান",
+    btn_login_now: "যাচাই করে প্রবেশ করুন",
+    btn_change_phone: "মোবাইল নম্বর পরিবর্তন করুন",
+    lbl_kisan_id: "কিষাণ নিবন্ধন নম্বর / আধার",
+    lbl_pin: "নিরাপত্তা পিন",
+    btn_sign_in_id: "কিষাণ আইডি দিয়ে লগইন করুন",
+    demo_badge: "ডেমো শংসাপত্র",
+    demo_desc: "ফোন: 9876543210 · ওটিপি: 123456 (স্বয়ংক্রিয় পূরণ)।",
+    not_registered_text: "নতুন কৃষক?",
+    call_helpline: "টোল-ফ্রি কিষাণ ডেস্ক: 1800-419-0900",
+    otp_sent_toast: "মোবাইলে ওটিপি পাঠানো হয়েছে! (ডেমো কোড: 123456)",
+    login_success: "লগইন সফল! স্বাগতম, রমেশ বাবু।",
+    btn_sign_out: "লগ আউট",
+    btn_sign_in: "সাইন ইন",
+    nav_login: "অ্যাকাউন্ট",
+    lbl_select_centre: "সংগ্রহ কেন্দ্র নির্বাচন করুন",
+    lbl_choose_timing: "সময় স্লট নির্বাচন করুন",
+    lbl_select_timing_dropdown: "বা তালিকা থেকে সময় নির্বাচন করুন",
+    selected_timing_label: "নির্বাচিত সময়",
+    btn_change_timing: "🕒 সময় পরিবর্তন করুন",
+    btn_update_timing: "সংগ্রহের সময় আপডেট করুন",
+    timing_updated_toast: "সংগ্রহের সময় সফলভাবে আপডেট করা হয়েছে!",
+    lang_name: 'Bengali',
+    lang_native: 'বাংলা',
+    dashboard_title: 'কৃষক ড্যাশবোর্ড',
+    book_title: 'সংগ্রহের স্লট বুক করুন',
+    track_title: 'শস্য ও পেমেন্ট ট্র্যাকার',
+    support_title: 'কৃষক সহায়তা কেন্দ্র',
+    welcome_back: 'স্বাগতম',
+    greeting: 'নমস্কার, রমেশ বাবু',
+    badge_active: '● সক্রিয়',
+    farmer_location: '📍 পেরুঙ্গুড়ি গ্রাম, তামিলনাড়ু · আইডি: TN-88291',
+    total_sold: 'মোট বিক্রয়',
+    disbursed: 'পরিশোধিত অর্থ',
+    passes: 'পাস',
+    valid_count: '০১ বৈধ',
+    support_strip_title: 'কৃষক সহায়তা ডেস্ক · টোল-ফ্রি',
+    support_strip_desc: 'এসএমএস সতর্কতা, হেল্পলাইন ১৮০০-৪১৯-০৯০০, অথবা নিকটস্থ সিএসসি কেন্দ্র।',
+    msp_rates_title: 'আজকের মান্ডি এমএসপি দর',
+    live_sync: 'তাজা দর',
+    crop_wheat: 'গম',
+    crop_paddy: 'ধান',
+    crop_cotton: 'তুলা',
+    per_quintal: 'প্রতি কুইন্টাল',
+    steady: 'অপরিবর্তিত',
+    pass_section_title: 'আপনার সংগ্রহ গেট পাস',
+    manage_pass: 'ব্যবস্থাপনা',
+    pass_badge: '✓ নিশ্চিত গেট বুকিং',
+    depot_location: 'সংগ্রহ কেন্দ্রের ঠিকানা',
+    slot_window: '◷ স্লট সময়',
+    today_tomorrow: 'আগামীকাল',
+    commodity_volume: '▣ ফসল ও পরিমাণ',
+    paddy_crop: 'ধান (গ্রেড এ)',
+    queue_low: 'কম ভিড় · ~১৫ মিনিট অপেক্ষা',
+    gate_accepting: 'গেটে প্রবেশ চলছে',
+    btn_track_produce: 'অবস্থা ট্র্যাক করুন',
+    book_slot_title: 'সংগ্রহ স্লট বুক করুন',
+    book_slot_subtitle: 'ফসল, কেন্দ্র এবং সময় বেছে নিন।',
+    lbl_select_crop: 'ফসল নির্বাচন করুন',
+    lbl_procurement_date: 'সংগ্রহের তারিখ',
+    lbl_estimated_qty: 'আনুমানিক ওজন (কেজি)',
+    lbl_choose_slot: 'কেন্দ্র ও সময় স্লট বাছুন',
+    crowd_low: 'কম ভিড়',
+    crowd_mod: 'মাঝারি ভিড়',
+    crowd_high: 'বেশি ভিড়',
+    btn_confirm_slot: 'স্লট নিশ্চিত করুন',
+    btn_save_return: 'সংরক্ষণ করে হোম পেজে যান',
+    btn_close: 'বন্ধ করুন',
+    stage_1_title: 'স্লট বুক হয়েছে',
+    stage_1_desc: 'ডিজিটাল গেট পাস অনুমোদিত হয়েছে।',
+    stage_2_title: 'আগমন ও প্রথম ওজন',
+    stage_2_desc: 'ওয়েব্রিজ বে ০৪-এ মোট ওজন রেকর্ড হয়েছে।',
+    stage_3_title: 'গুণমান ও আর্দ্রতা পরীক্ষা',
+    stage_3_desc: 'আর্দ্রতা ১৪.২% ল্যাবে পরীক্ষা চলছে।',
+    stage_4_title: 'ডিবিটি ব্যাংক পেমেন্ট',
+    stage_4_desc: 'টাকা সরাসরি আধার সংযুক্ত ব্যাংক অ্যাকাউন্টে যাবে।',
+    btn_simulate_stage: '⚡ পরবর্তী ধাপ (ডেমো)',
+    sms_notice: 'পরীক্ষা ও পেমেন্ট সম্পন্ন হলে এসএমএস পাবেন।',
+    support_page_title: 'কৃষক সহায়তা ও অভিযোগ নিবারণ',
+    support_hero_title: '২৪/৭ মান্ডি হেল্পলাইন',
+    support_hero_subtitle: 'নিজের ভাষায় কর্মকর্তাদের সাথে কথা বলুন',
+    register_grievance_title: 'অভিযোগ দায়ের করুন',
+    grievance_sub: 'জেলা সংগ্রহ আধিকারিক অভিযোগ পর্যালোচনা করবেন।',
+    lbl_category: 'সমস্যার বিভাগ',
+    cat_payment: 'পেমেন্ট / ডিবিটি বিলম্ব',
+    cat_quality: 'ফসলের মান ও আর্দ্রতা সংক্রান্ত বিরোধ',
+    cat_slot: 'স্লট ও গেট প্রবেশ সমস্যা',
+    cat_staff: 'কর্মীদের আচরণ / সাহায্য',
+    cat_other: 'অন্যান্য তথ্য',
+    lbl_description: 'সমস্যার বিবরণ দিন',
+    btn_submit_grievance: 'অভিযোগ জমা দিন',
+    nav_home: 'হোম',
+    nav_book: 'স্লট বুক',
+    nav_track: 'ট্র্যাক অবস্থা',
+    nav_support: 'সহায়তা',
+    select_language_title: 'ভাষা নির্বাচন করুন',
+    select_language_sub: 'অ্যাপ ব্যবহারের জন্য নিজের ভাষা বাছুন',
+    rates_synced: 'সর্বশেষ বাজার দর আপডেট হয়েছে'
+  },
+  gu: {
+    tagline: "ખેડૂત ખરીદી પોર્ટલ",
+    badge_gov: "સરકારી પ્રમાણિત પોર્ટલ",
+    login_title: "ખેડૂત લૉગિન",
+    login_subtitle: "તમારા એમએસપી વેચાણ પાસ અને ડીબીટી બેંક જમાની સ્થિતિ તપાસો.",
+    tab_otp: "મોબાઇલ OTP",
+    tab_kisan_id: "કિસાન / આધાર ID",
+    lbl_mobile_number: "નોંધાયેલ મોબાઇલ નંબર",
+    mobile_hint: "અમે તમારા મોબાઇલ પર 6 અંકનો ચકાસણી કોડ મોકલીશું.",
+    btn_get_otp: "ઓટીપી મેળવો",
+    lbl_enter_otp: "6 અંકનો ઓટીપી દાખલ કરો",
+    btn_resend: "ફરીથી મોકલો",
+    btn_login_now: "ચકાસો અને પ્રવેશ કરો",
+    btn_change_phone: "મોબાઇલ નંબર બદલો",
+    lbl_kisan_id: "કિસાન નોંધણી નંબર / આધાર",
+    lbl_pin: "સુરક્ષા પિન",
+    btn_sign_in_id: "કિસાન ID થી લૉગિન કરો",
+    demo_badge: "ડેમો માહિતી",
+    demo_desc: "ફોન: 9876543210 · ઓટીપી: 123456.",
+    not_registered_text: "શું તમે નવા ખેડૂત છો?",
+    call_helpline: "ટોલ-ફ્રી કિસાન ડેસ્ક: 1800-419-0900",
+    otp_sent_toast: "મોબાઇલ પર ઓટીપી સફળતાપૂર્વક મોકલાયો! (કોડ: 123456)",
+    login_success: "સફળતાપૂર્વક લૉગિન! સ્વાગત છે, રમેશભાઈ.",
+    btn_sign_out: "લૉગ આઉટ",
+    btn_sign_in: "સાઇન ઇન",
+    nav_login: "ખાતું",
+    lbl_select_centre: "ખરીદી કેન્દ્ર પસંદ કરો",
+    lbl_choose_timing: "સમય સ્લોટ પસંદ કરો",
+    lbl_select_timing_dropdown: "અથવા યાદીમાંથી સમય પસંદ કરો",
+    selected_timing_label: "પસંદ કરેલ સમય",
+    btn_change_timing: "🕒 સમય બદલો",
+    btn_update_timing: "ખરીદીનો સમય અપડેટ કરો",
+    timing_updated_toast: "ખરીદીનો સમય સફળતાપૂર્વક અપડેટ થયો!",
+    lang_name: 'Gujarati',
+    lang_native: 'ગુજરાતી',
+    dashboard_title: 'ખેડૂત ડેશબોર્ડ',
+    book_title: 'ખરીદી સ્લોટ બુકિંગ',
+    track_title: 'પાક અને ચુકવણી ટ્રેકર',
+    support_title: 'કિસાન સહાય કેન્દ્ર',
+    welcome_back: 'સ્વાગત છે',
+    greeting: 'નમસ્તે, રમેશભાઈ',
+    badge_active: '● સક્રિય',
+    farmer_location: '📍 પેરુંગુડી ગામ, તમિલનાડુ · ID: TN-88291',
+    total_sold: 'કુલ વેચાણ',
+    disbursed: 'ચૂકવેલ રકમ',
+    passes: 'પાસ',
+    valid_count: '01 માન્ય',
+    support_strip_title: 'ખેડૂત સહાય ડેસ્ક · ટોલ-ફ્રી',
+    support_strip_desc: 'SMS ચેતવણી, હેલ્પલાઇન 1800-419-0900, અથવા નજીકનું CSC કેન્દ્ર.',
+    msp_rates_title: 'આજના બજાર MSP ભાવો',
+    live_sync: 'લાઈવ ભાવ',
+    crop_wheat: 'ઘઉં',
+    crop_paddy: 'ડાંગર (ચોખા)',
+    crop_cotton: 'કપાસ',
+    per_quintal: 'પ્રતિ ક્વિન્ટલ',
+    steady: 'સ્થિર',
+    pass_section_title: 'તમારો ખરીદી ગેટ પાસ',
+    manage_pass: 'મેનેજ કરો',
+    pass_badge: '✓ કન્ફર્મ ગેટ બુકિંગ',
+    depot_location: 'ખરીદી કેન્દ્ર સરનામું',
+    slot_window: '◷ સ્લોટ સમય',
+    today_tomorrow: 'આવતીકાલે',
+    commodity_volume: '▣ પાક અને જથ્થો',
+    paddy_crop: 'ડાંગર (ગ્રેડ A)',
+    queue_low: 'ઓછી ભીડ · ~15 મિનિટ રાહ',
+    gate_accepting: 'ગેટ પર પ્રવેશ ચાલુ છે',
+    btn_track_produce: 'સ્થિતિ ટ્રેક કરો',
+    book_slot_title: 'ખરીદી સ્લોટ બુક કરો',
+    book_slot_subtitle: 'પાક, કેન્દ્ર અને અનુકૂળ સમય પસંદ કરો.',
+    lbl_select_crop: 'પાક પસંદ કરો',
+    lbl_procurement_date: 'ખરીદી તારીખ',
+    lbl_estimated_qty: 'અંદાજિત વજન (કિલો)',
+    lbl_choose_slot: 'કેન્દ્ર અને સ્લોટ પસંદ કરો',
+    crowd_low: 'ઓછી ભીડ',
+    crowd_mod: 'મધ્યમ ભીડ',
+    crowd_high: 'વધુ ભીડ',
+    btn_confirm_slot: 'સ્લોટ કન્ફર્મ કરો',
+    btn_save_return: 'સાચવો અને હોમ પર જાઓ',
+    btn_close: 'બંધ કરો',
+    stage_1_title: 'સ્લોટ બુક થયો',
+    stage_1_desc: 'ડિજિટલ ગેટ પાસ મંજૂર થયો છે.',
+    stage_2_title: 'આગમન અને વજન',
+    stage_2_desc: 'વેબ્રિજ પર વાહનનું કુલ વજન નોંધાયું.',
+    stage_3_title: 'ગુણવત્તા અને ભેજ ચકાસણી',
+    stage_3_desc: 'ભેજ 14.2% લેબમાં તપાસ હેઠળ છે.',
+    stage_4_title: 'DBT બેંક ખાતામાં ચુકવણી',
+    stage_4_desc: 'રકમ સીધી બેંક ખાતામાં જમા થશે.',
+    btn_simulate_stage: '⚡ આગલું સ્ટેજ (ડેમો)',
+    sms_notice: 'ચકાસણી અને પેમેન્ટ પૂર્ણ થતાં SMS મળશે.',
+    support_page_title: 'ખેડૂત સહાય અને ફરિયાદ નિવારણ',
+    support_hero_title: '24/7 મંડી હેલ્પલાઇન',
+    support_hero_subtitle: 'તમારી ભાષામાં અધિકારીઓ સાથે વાત કરો',
+    register_grievance_title: 'ફરિયાદ નોંધાવો',
+    grievance_sub: 'જિલ્લા ખરીદી અધિકારી દ્વારા ફરિયાદ તપાસાશે.',
+    lbl_category: 'સમસ્યાનો પ્રકાર',
+    cat_payment: 'ચુકવણી / DBT વિલંબ',
+    cat_quality: 'પાકની ગુણવત્તા વિવાદ',
+    cat_slot: 'સ્લોટ અને ગેટ પ્રવેશ સમસ્યા',
+    cat_staff: 'સ્ટાફની વર્તણૂક / મદદ',
+    cat_other: 'અન્ય પૂછપરછ',
+    lbl_description: 'વિગત જણાવો',
+    btn_submit_grievance: 'ફરિયાદ સબમિટ કરો',
+    nav_home: 'હોમ',
+    nav_book: 'સ્લોટ બુક',
+    nav_track: 'ટ્રેક સ્થિતિ',
+    nav_support: 'સહાય',
+    select_language_title: 'ભાષા પસંદ કરો',
+    select_language_sub: 'એપ્લિકેશન માટે તમારી પ્રાદેશિક ભાષા પસંદ કરો',
+    rates_synced: 'બજાર ભાવો સફળતાપૂર્વક અપડેટ થયા'
+  },
+  kn: {
+    tagline: "ರೈತರ ಖರೀದಿ ಪೋರ್ಟಲ್",
+    badge_gov: "ಸರ್ಕಾರಿ ಪ್ರಮಾಣೀಕೃತ ಪೋರ್ಟಲ್",
+    login_title: "ರೈತರ ಲಾಗಿನ್",
+    login_subtitle: "ನಿಮ್ಮ ನೇರ ಖರೀದಿ ಪಾಸ್‌ಗಳು ಮತ್ತು ಡಿಬಿಟಿ ಬ್ಯಾಂಕ್ ಜಮೆ ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸಿ.",
+    tab_otp: "ಮೊಬೈಲ್ OTP",
+    tab_kisan_id: "ಕಿಸಾನ್ / ಆಧಾರ್ ID",
+    lbl_mobile_number: "ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ",
+    mobile_hint: "ನಿಮ್ಮ ಮೊಬೈಲ್‌ಗೆ 6-ಅಂಕಿಯ ಪರಿಶೀಲನಾ ಕೋಡ್ ಕಳುಹಿಸಲಾಗುವುದು.",
+    btn_get_otp: "OTP ಪಡೆಯಿರಿ",
+    lbl_enter_otp: "6-ಅಂಕಿಯ OTP ನಮೂದಿಸಿ",
+    btn_resend: "ಮತ್ತೆ ಕಳುಹಿಸಿ",
+    btn_login_now: "ಪರಿಶೀಲಿಸಿ ಪ್ರವೇಶಿಸಿ",
+    btn_change_phone: "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಬದಲಾಯಿಸಿ",
+    lbl_kisan_id: "ಕಿಸಾನ್ ನೋಂದಣಿ ಸಂಖ್ಯೆ / ಆಧಾರ್",
+    lbl_pin: "ಭದ್ರತಾ ಪಿನ್",
+    btn_sign_in_id: "ಕಿಸಾನ್ ಐಡಿಯೊಂದಿಗೆ ಲಾಗಿನ್ ಮಾಡಿ",
+    demo_badge: "ಡೆಮೊ ಮಾಹಿತಿ",
+    demo_desc: "ಫೋನ್: 9876543210 · OTP: 123456.",
+    not_registered_text: "ಹೊಸ ರೈತರೇ?",
+    call_helpline: "ಟೋಲ್-ಫ್ರೀ ಕಿಸಾನ್ ಡೆಸ್ಕ್: 1800-419-0900",
+    otp_sent_toast: "ಮೊಬೈಲ್‌ಗೆ OTP ಕಳುಹಿಸಲಾಗಿದೆ! (ಡೆಮೊ ಕೋಡ್: 123456)",
+    login_success: "ಲಾಗಿನ್ ಯಶಸ್ವಿಯಾಗಿದೆ! ಸುಸ್ವಾಗತ, ರಮೇಶ್.",
+    btn_sign_out: "ಲಾಗ್ ಔಟ್",
+    btn_sign_in: "ಸೈನ್ ಇನ್",
+    nav_login: "ಖಾತೆ",
+    lbl_select_centre: "ಖರೀದಿ ಕೇಂದ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    lbl_choose_timing: "ಸಮಯ ಸ್ಲಾಟ್ ಆಯ್ಕೆಮಾಡಿ",
+    lbl_select_timing_dropdown: "ಅಥವಾ ಪಟ್ಟಿಯಿಂದ ಸಮಯವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    selected_timing_label: "ಆಯ್ಕೆಮಾಡಿದ ಸಮಯ",
+    btn_change_timing: "🕒 ಸಮಯ ಬದಲಾಯಿಸಿ",
+    btn_update_timing: "ಖರೀದಿ ಸಮಯವನ್ನು ನವೀಕರಿಸಿ",
+    timing_updated_toast: "ಖರೀದಿ ಸಮಯ ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ!",
+    lang_name: 'Kannada',
+    lang_native: 'ಕನ್ನಡ',
+    dashboard_title: 'ರೈತ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್',
+    book_title: 'ಖರೀದಿ ಸ್ಲಾಟ್ ಬುಕಿಂಗ್',
+    track_title: 'ಧಾನ್ಯ ಮತ್ತು ಪಾವತಿ ಟ್ರ್ಯಾಕರ್',
+    support_title: 'ರೈತ ಸಹಾಯವಾಣಿ ಕೇಂದ್ರ',
+    welcome_back: 'ಮತ್ತೆ ಸುಸ್ವಾಗತ',
+    greeting: 'ನಮಸ್ಕಾರ, ರಮೇಶ್ ಅವರೇ',
+    badge_active: '● ಸಕ್ರಿಯ',
+    farmer_location: '📍 ಪೆರುಂಗುಡಿ ಗ್ರಾಮ, ತಮಿಳುನಾಡು · ID: TN-88291',
+    total_sold: 'ಒಟ್ಟು ಮಾರಾಟ',
+    disbursed: 'ಪಾವತಿಸಿದ ಮೊತ್ತ',
+    passes: 'ಪಾಸ್‌ಗಳು',
+    valid_count: '01 ಮಾನ್ಯ',
+    support_strip_title: 'ರೈತ ಸಹಾಯ ಕೇಂದ್ರ · ಟೋಲ್-ಫ್ರೀ',
+    support_strip_desc: 'SMS ಎಚ್ಚರಿಕೆ, ಸಹಾಯವಾಣಿ 1800-419-0900 ಅಥವಾ ಹತ್ತಿರದ CSC ಕೇಂದ್ರ.',
+    msp_rates_title: 'ಇಂದಿನ ಮಾರುಕಟ್ಟೆ ಎಂಎಸ್‌ಪಿ ದರಗಳು',
+    live_sync: 'ಲೈವ್ ದರಗಳು',
+    crop_wheat: 'ಗೋಧಿ',
+    crop_paddy: 'ಭತ್ತ',
+    crop_cotton: 'ಹತ್ತಿ',
+    per_quintal: 'ಪ್ರತಿ ಕ್ವಿಂಟಾಲ್‌ಗೆ',
+    steady: 'ಸ್ಥಿರ',
+    pass_section_title: 'ನಿಮ್ಮ ಖರೀದಿ ಗೇಟ್ ಪಾಸ್',
+    manage_pass: 'ನಿರ್ವಹಿಸಿ',
+    pass_badge: '✓ ದೃಢಪಡಿಸಿದ ಗೇಟ್ ಬುಕಿಂಗ್',
+    depot_location: 'ಖರೀದಿ ಕೇಂದ್ರದ ವಿಳಾಸ',
+    slot_window: '◷ ಸ್ಲಾಟ್ ಸಮಯ',
+    today_tomorrow: 'ನಾಳೆ',
+    commodity_volume: '▣ ಬೆಳೆ ಮತ್ತು ಪ್ರಮಾಣ',
+    paddy_crop: 'ಭತ್ತ (ಗ್ರೇಡ್ A)',
+    queue_low: 'ಕಡಿಮೆ ಕಾಯುವಿಕೆ · ~15 ನಿಮಿಷ',
+    gate_accepting: 'ಗೇಟ್ ಪ್ರವೇಶ ಮುಕ್ತವಾಗಿದೆ',
+    btn_track_produce: 'ಸ್ಥಿತಿಯನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ',
+    book_slot_title: 'ಖರೀದಿ ಸ್ಲಾಟ್ ಕಾಯ್ದಿರಿಸಿ',
+    book_slot_subtitle: 'ಬೆಳೆ, ಕೇಂದ್ರ ಮತ್ತು ಸಮಯವನ್ನು ಆಯ್ಕೆಮಾಡಿ.',
+    lbl_select_crop: 'ಬೆಳೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ',
+    lbl_procurement_date: 'ಖರೀದಿ ದಿನಾಂಕ',
+    lbl_estimated_qty: 'ಅಂದಾಜು ತೂಕ (ಕೆಜಿ)',
+    lbl_choose_slot: 'ಕೇಂದ್ರ ಮತ್ತು ಸ್ಲಾಟ್ ಆಯ್ಕೆಮಾಡಿ',
+    crowd_low: 'ಕಡಿಮೆ ಜನಸಂದಣಿ',
+    crowd_mod: 'ಮಧ್ಯಮ ಜನಸಂದಣಿ',
+    crowd_high: 'ಹೆಚ್ಚು ಜನಸಂದಣಿ',
+    btn_confirm_slot: 'ಸ್ಲಾಟ್ ದೃಢೀಕರಿಸಿ',
+    btn_save_return: 'ಉಳಿಸಿ ಮತ್ತು ಮುಖಪುಟಕ್ಕೆ ಹೋಗಿ',
+    btn_close: 'ಮುಚ್ಚಿ',
+    stage_1_title: 'ಸ್ಲಾಟ್ ಬುಕ್ ಆಗಿದೆ',
+    stage_1_desc: 'ಡಿಜಿಟಲ್ ಗೇಟ್ ಪಾಸ್ ದೃಢಪಟ್ಟಿದೆ.',
+    stage_2_title: 'ಆಗಮನ ಮತ್ತು ಮೊದಲ ತೂಕ',
+    stage_2_desc: 'ವೇಬ್ರಿಡ್ಜ್‌ನಲ್ಲಿ ವಾಹನದ ತೂಕ ದಾಖಲಾಗಿದೆ.',
+    stage_3_title: 'ಗುಣಮಟ್ಟ ಮತ್ತು ತೇವಾಂಶ ಪರೀಕ್ಷೆ',
+    stage_3_desc: 'ತೇವಾಂಶ 14.2% ಲ್ಯಾಬ್‌ನಲ್ಲಿ ತಪಾಸಣೆಯಲ್ಲಿದೆ.',
+    stage_4_title: 'DBT ಬ್ಯಾಂಕ್ ಪಾವತಿ',
+    stage_4_desc: 'ಮೊತ್ತವು ನೇರವಾಗಿ ಬ್ಯಾಂಕ್ ಖಾತೆಗೆ ಜಮೆಯಾಗಲಿದೆ.',
+    btn_simulate_stage: '⚡ ಮುಂದಿನ ಹಂತ (ಡೆಮೊ)',
+    sms_notice: 'ಪರೀಕ್ಷೆ ಮತ್ತು ಪಾವತಿ ಪೂರ್ಣಗೊಂಡಾಗ SMS ಬರಲಿದೆ.',
+    support_page_title: 'ರೈತ ಸಹಾಯ ಮತ್ತು ಕುಂದುಕೊರತೆ ನಿವಾರಣೆ',
+    support_hero_title: '24/7 ಮಾರುಕಟ್ಟೆ ಸಹಾಯವಾಣಿ',
+    support_hero_subtitle: 'ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿ ಅಧಿಕಾರಿಗಳೊಂದಿಗೆ ಮಾತನಾಡಿ',
+    register_grievance_title: 'ದೂರು ದಾಖಲಿಸಿ',
+    grievance_sub: 'ಜಿಲ್ಲಾ ಖರೀದಿ ಅಧಿಕಾರಿಯವರು ಪರಿಶೀಲಿಸುತ್ತಾರೆ.',
+    lbl_category: 'ಸಮಸ್ಯೆಯ ವರ್ಗ',
+    cat_payment: 'ಪಾವತಿ / DBT ವಿಳಂಬ',
+    cat_quality: 'ಧಾನ್ಯದ ಗುಣಮಟ್ಟ ವಿವಾದ',
+    cat_slot: 'ಸ್ಲಾಟ್ ಮತ್ತು ಗೇಟ್ ಪ್ರವೇಶ ಸಮಸ್ಯೆ',
+    cat_staff: 'ಸಿಬ್ಬಂದಿ ನಡವಳಿಕೆ / ಸಹಾಯ',
+    cat_other: 'ಇತರ ವಿಚಾರಣೆಗಳು',
+    lbl_description: 'ವಿವರಗಳನ್ನು ಬರೆಯಿರಿ',
+    btn_submit_grievance: 'ದೂರು ಸಲ್ಲಿಸಿ',
+    nav_home: 'ಹೋಮ್',
+    nav_book: 'ಸ್ಲಾಟ್ ಬುಕ್',
+    nav_track: 'ಟ್ರ್ಯಾಕ್ ಸ್ಥಿತಿ',
+    nav_support: 'ಸಹಾಯ',
+    select_language_title: 'ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ',
+    select_language_sub: 'ಅಪ್ಲಿಕೇಶನ್‌ಗಾಗಿ ನಿಮ್ಮ ಪ್ರಾದೇಶಿಕ ಭಾಷೆಯನ್ನು ಆರಿಸಿ',
+    rates_synced: 'ಮಾರುಕಟ್ಟೆ ದರಗಳನ್ನು ನವೀಕರಿಸಲಾಗಿದೆ'
+  },
+  or: {
+    tagline: "କୃଷକ କ୍ରୟ ପୋର୍ଟାଲ",
+    badge_gov: "ସରକାରୀ ପ୍ରମାଣିତ ପୋର୍ଟାଲ",
+    login_title: "କୃଷକ ଲଗଇନ୍",
+    login_subtitle: "ଆପଣଙ୍କ ଏମଏସପି ବିକ୍ରୟ ପାସ୍ ଏବଂ ଡିବିଟି ବ୍ୟାଙ୍କ ଜମା ସ୍ଥିତି ଯାଞ୍ଚ କରନ୍ତୁ।",
+    tab_otp: "ମୋବାଇଲ୍ OTP",
+    tab_kisan_id: "କିଷାନ / ଆଧାର ID",
+    lbl_mobile_number: "ପଞ୍ଜୀକୃତ ମୋବାଇଲ୍ ନମ୍ବର",
+    mobile_hint: "ଆପଣଙ୍କ ମୋବାଇଲକୁ ୬-ଅଙ୍କ ବିଶିଷ୍ଟ ଯାଞ୍ଚ କୋଡ୍ ପଠାଯିବ।",
+    btn_get_otp: "OTP ପ୍ରାପ୍ତ କରନ୍ତୁ",
+    lbl_enter_otp: "୬-ଅଙ୍କ ବିଶିଷ୍ଟ OTP ପ୍ରବେଶ କରନ୍ତୁ",
+    btn_resend: "ପୁନର୍ବାର ପଠାନ୍ତୁ",
+    btn_login_now: "ଯାଞ୍ଚ କରି ପ୍ରବେଶ କରନ୍ତୁ",
+    btn_change_phone: "ମୋବାଇଲ୍ ନମ୍ବର ପରିବର୍ତ୍ତନ କରନ୍ତୁ",
+    lbl_kisan_id: "କିଷାନ ପଞ୍ଜୀକରଣ ନମ୍ବର / ଆଧାର",
+    lbl_pin: "ସୁରକ୍ଷା ପିନ୍",
+    btn_sign_in_id: "କିଷାନ ID ସହିତ ଲଗଇନ୍ କରନ୍ତୁ",
+    demo_badge: "ଡେମୋ ବିବରଣୀ",
+    demo_desc: "ଫୋନ୍: 9876543210 · OTP: 123456.",
+    not_registered_text: "ନୂତନ କୃଷକ କି?",
+    call_helpline: "ଟୋଲ୍-ଫ୍ରି କିଷାନ ହେଲ୍ପଲାଇନ୍: 1800-419-0900",
+    otp_sent_toast: "ମୋବାଇଲକୁ OTP ପଠାଗଲା! (କୋଡ୍: 123456)",
+    login_success: "ସଫଳତାର ସହିତ ଲଗଇନ୍ ହେଲା! ସ୍ୱାଗତ, ରମେଶ ବାବୁ।",
+    btn_sign_out: "ଲଗ୍ ଆଉଟ୍",
+    btn_sign_in: "ସାଇନ୍ ଇନ୍",
+    nav_login: "ଖାତା",
+    lbl_select_centre: "କ୍ରୟ କେନ୍ଦ୍ର ଚୟନ କରନ୍ତୁ",
+    lbl_choose_timing: "ସମୟ ସ୍ଲଟ୍ ଚୟନ କରନ୍ତୁ",
+    lbl_select_timing_dropdown: "କିମ୍ବା ତାଲିକାରୁ ସମୟ ବାଛନ୍ତୁ",
+    selected_timing_label: "ଚୟନିତ ସମୟ",
+    btn_change_timing: "🕒 ସମୟ ପରିବର୍ତ୍ତନ କରନ୍ତୁ",
+    btn_update_timing: "କ୍ରୟ ସମୟ ଅଦ୍ୟତନ କରନ୍ତୁ",
+    timing_updated_toast: "କ୍ରୟ ସମୟ ସଫଳତାର ସହିତ ଅଦ୍ୟତନ ହୋଇଛି!",
+    lang_name: 'Odia',
+    lang_native: 'ଓଡ଼ିଆ',
+    dashboard_title: 'କୃଷକ ଡ୍ୟାସବୋର୍ଡ',
+    book_title: 'କ୍ରୟ ସ୍ଲଟ୍ ବୁକିଂ',
+    track_title: 'ଶସ୍ୟ ଏବଂ ଦେୟ ଟ୍ରାକର',
+    support_title: 'କିଷାନ ସହାୟତା କେନ୍ଦ୍ର',
+    welcome_back: 'ସ୍ୱାଗତ',
+    greeting: 'ନମସ୍କାର, ରମେଶ ବାବୁ',
+    badge_active: '● ସକ୍ରିୟ',
+    farmer_location: '📍 ପେରୁଙ୍ଗୁଡି ଗ୍ରାମ, ତାମିଲନାଡୁ · ID: TN-88291',
+    total_sold: 'ମୋଟ ବିକ୍ରୟ',
+    disbursed: 'ପ୍ରାପ୍ତ ରାଶି',
+    passes: 'ପାସ୍',
+    valid_count: '01 ବୈଧ',
+    support_strip_title: 'କୃଷକ ସହାୟତା ଡେସ୍କ · ଟୋଲ-ଫ୍ରି',
+    support_strip_desc: 'SMS ସୂଚନା, ହେଲ୍ପଲାଇନ 1800-419-0900 କିମ୍ବା ନିକଟସ୍ଥ CSC କେନ୍ଦ୍ର।',
+    msp_rates_title: 'ଆଜିର ମଣ୍ଡି ସରକାରୀ ଦର (MSP)',
+    live_sync: 'ତାଜା ଦର',
+    crop_wheat: 'ଗହମ',
+    crop_paddy: 'ଧାନ',
+    crop_cotton: 'କପା',
+    per_quintal: 'କୁଇଣ୍ଟାଲ ପିଛା',
+    steady: 'ଅପରିବର୍ତ୍ତିତ',
+    pass_section_title: 'ଆପଣଙ୍କ କ୍ରୟ ଗେଟ୍ ପାସ୍',
+    manage_pass: 'ପରିଚାଳନା',
+    pass_badge: '✓ ନିଶ୍ଚିତ ଗେଟ୍ ବୁକିଂ',
+    depot_location: 'କ୍ରୟ କେନ୍ଦ୍ର ଠିକଣା',
+    slot_window: '◷ ସ୍ଲଟ୍ ସମୟ',
+    today_tomorrow: 'ଆସନ୍ତାକାଲି',
+    commodity_volume: '▣ ଫସଲ ଏବଂ ପରିମାଣ',
+    paddy_crop: 'ଧାନ (ଗ୍ରେଡ୍ A)',
+    queue_low: 'କମ୍ ଭିଡ଼ · ~15 ମିନିଟ୍ ଅପେକ୍ଷା',
+    gate_accepting: 'ଗେଟ୍ ପ୍ରବେଶ ଚାଲୁ ଅଛି',
+    btn_track_produce: 'ସ୍ଥିତି ଟ୍ରାକ୍ କରନ୍ତୁ',
+    book_slot_title: 'କ୍ରୟ ସ୍ଲଟ୍ ବୁକ୍ କରନ୍ତୁ',
+    book_slot_subtitle: 'ଫସଲ, କେନ୍ଦ୍ର ଏବଂ ସମୟ ବାଛନ୍ତୁ।',
+    lbl_select_crop: 'ଫସଲ ଚୟନ କରନ୍ତୁ',
+    lbl_procurement_date: 'କ୍ରୟ ତାରିଖ',
+    lbl_estimated_qty: 'ଆନୁମାନିକ ଓଜନ (କିଲୋ)',
+    lbl_choose_slot: 'କେନ୍ଦ୍ର ଏବଂ ସ୍ଲଟ୍ ବାଛନ୍ତୁ',
+    crowd_low: 'କମ୍ ଭିଡ଼',
+    crowd_mod: 'ମଧ୍ୟମ ଭିଡ଼',
+    crowd_high: 'ଅଧିକ ଭିଡ଼',
+    btn_confirm_slot: 'ସ୍ଲଟ୍ ନିଶ୍ଚିତ କରନ୍ତୁ',
+    btn_save_return: 'ସେଭ୍ କରି ହୋମକୁ ଯାଆନ୍ତୁ',
+    btn_close: 'ବନ୍ଦ କରନ୍ତୁ',
+    stage_1_title: 'ସ୍ଲଟ୍ ବୁକ୍ ହେଲା',
+    stage_1_desc: 'ଡିଜିଟାଲ୍ ଗେଟ୍ ପାସ୍ ନିଶ୍ଚିତ ହୋଇଛି।',
+    stage_2_title: 'ଆଗମନ ଏବଂ ପ୍ରଥମ ଓଜନ',
+    stage_2_desc: 'ୱେବ୍ରିଜ୍‌ରେ ମୋଟ ଓଜନ ରେକର୍ଡ ହୋଇଛି।',
+    stage_3_title: 'ଗୁଣବତ୍ତା ଏବଂ ଆର୍ଦ୍ରତା ଯାଞ୍ଚ',
+    stage_3_desc: 'ଆର୍ଦ୍ରତା 14.2% ଲ୍ୟାବରେ ଯାଞ୍ଚ ଚାଲିଛି।',
+    stage_4_title: 'DBT ବ୍ୟାଙ୍କ ଜମା',
+    stage_4_desc: 'ଟଙ୍କା ସିଧାସଳଖ ଆପଣଙ୍କ ବ୍ୟାଙ୍କ ଖାତାକୁ ଯିବ।',
+    btn_simulate_stage: '⚡ ପରବର୍ତ୍ତୀ ପଦକ୍ଷେପ (ଡେମୋ)',
+    sms_notice: 'ପରୀକ୍ଷା ଏବଂ ପେମେଣ୍ଟ ସରିଲେ SMS ପାଇବେ।',
+    support_page_title: 'କୃଷକ ସହାୟତା ଏବଂ ଅଭିଯୋଗ ନିବାରଣ',
+    support_hero_title: '24/7 ମଣ୍ଡି ହେଲ୍ପଲାଇନ',
+    support_hero_subtitle: 'ନିଜ ଭାଷାରେ ଅଧିକାରୀଙ୍କ ସହିତ କଥା ହୁଅନ୍ତୁ',
+    register_grievance_title: 'ଅଭିଯୋଗ ଦାଖଲ କରନ୍ତୁ',
+    grievance_sub: 'ଜିଲ୍ଲା କ୍ରୟ ଅଧିକାରୀ ଏହା ଯାଞ୍ଚ କରିବେ।',
+    lbl_category: 'ବିଭାଗ',
+    cat_payment: 'ପେମେଣ୍ଟ / DBT ବିଳମ୍ବ',
+    cat_quality: 'ଧାନ ଗୁଣବତ୍ତା ବିବାଦ',
+    cat_slot: 'ସ୍ଲଟ୍ ଏବଂ ଗେଟ୍ ପ୍ରବେଶ ସମସ୍ୟା',
+    cat_staff: 'କର୍ମଚାରୀଙ୍କ ବ୍ୟବହାର / ସାହାଯ୍ୟ',
+    cat_other: 'ଅନ୍ୟାନ୍ୟ ସୂଚନା',
+    lbl_description: 'ବିବରଣୀ ଲେଖନ୍ତୁ',
+    btn_submit_grievance: 'ଅଭିଯୋଗ ଦାଖଲ କରନ୍ତୁ',
+    nav_home: 'ହୋମ୍',
+    nav_book: 'ସ୍ଲଟ୍ ବୁକ୍',
+    nav_track: 'ଟ୍ରାକ୍ ସ୍ଥିତି',
+    nav_support: 'ସହାୟତା',
+    select_language_title: 'ଭାଷା ଚୟନ କରନ୍ତୁ',
+    select_language_sub: 'ଆପ୍ ପାଇଁ ଆପଣଙ୍କ ଭାଷା ବାଛନ୍ତୁ',
+    rates_synced: 'ମଣ୍ଡି ଦର ଅଦ୍ୟତନ ହୋଇଛି'
+  },
+  ml: {
+    tagline: "കർഷക സംഭരണ പോർട്ടൽ",
+    badge_gov: "സർക്കാർ അംഗീകൃത പോർട്ടൽ",
+    login_title: "കർഷക ലോഗിൻ",
+    login_subtitle: "നിങ്ങളുടെ നേരിട്ടുള്ള സംഭരണ പാസുകളും ഡിബിടി ബാങ്ക് പേയ്‌മെന്റ് വിവരങ്ങളും പരിശോധിക്കുക.",
+    tab_otp: "മൊബൈൽ OTP",
+    tab_kisan_id: "കിസാൻ / ആധാർ ID",
+    lbl_mobile_number: "രജിസ്റ്റർ ചെയ്ത മൊബൈൽ നമ്പർ",
+    mobile_hint: "നിങ്ങളുടെ ഫോണിലേക്ക് 6 അക്ക സ്ഥിരീകരണ കോഡ് അയക്കും.",
+    btn_get_otp: "OTP നേടുക",
+    lbl_enter_otp: "6 അക്ക OTP രേഖപ്പെടുത്തുക",
+    btn_resend: "വീണ്ടും അയക്കുക",
+    btn_login_now: "സ്ഥിരീകരിച്ച് പ്രവേശിക്കുക",
+    btn_change_phone: "മൊബൈൽ നമ്പർ മാറ്റുക",
+    lbl_kisan_id: "കിസാൻ രജിസ്ട്രേഷൻ നമ്പർ / ആധാർ",
+    lbl_pin: "സുരക്ഷാ പിൻ",
+    btn_sign_in_id: "കിസാൻ ഐഡി ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യുക",
+    demo_badge: "ഡെമോ വിവരങ്ങൾ",
+    demo_desc: "ഫോൺ: 9876543210 · OTP: 123456.",
+    not_registered_text: "പുതിയ കർഷകനാണോ?",
+    call_helpline: "ടോൾ-ഫ്രീ കിസാൻ ഡെസ്ക്: 1800-419-0900",
+    otp_sent_toast: "മൊബൈലിലേക്ക് OTP അയച്ചു! (കോഡ്: 123456)",
+    login_success: "വിജയകരമായി ലോഗിൻ ചെയ്തു! നമസ്കാരം, രമേഷ്.",
+    btn_sign_out: "ലോഗ് ഔട്ട്",
+    btn_sign_in: "സൈൻ ഇൻ",
+    nav_login: "അക്കൗണ്ട്",
+    lbl_select_centre: "സംഭരണ കേന്ദ്രം തിരഞ്ഞെടുക്കുക",
+    lbl_choose_timing: "സമയ സ്ലോട്ട് തിരഞ്ഞെടുക്കുക",
+    lbl_select_timing_dropdown: "അല്ലെങ്കിൽ ലിസ്റ്റിൽ നിന്ന് സമയം തിരഞ്ഞെടുക്കുക",
+    selected_timing_label: "തിരഞ്ഞെടുത്ത സമയം",
+    btn_change_timing: "🕒 സമയം മാറ്റുക",
+    btn_update_timing: "സംഭരണ സമയം പുതുക്കുക",
+    timing_updated_toast: "സംഭരണ സമയം വിജയകരമായി അപ്‌ഡേറ്റുചെയ്‌തു!",
+    lang_name: 'Malayalam',
+    lang_native: 'മലയാളം',
+    dashboard_title: 'കർഷക ഡാഷ്‌ബോർഡ്',
+    book_title: 'സംഭരണ സ്ലോട്ട് ബുക്കിംഗ്',
+    track_title: 'ധാന്യവും പേയ്‌മെന്റും ട്രാക്കർ',
+    support_title: 'കർഷക സഹായ കേന്ദ്രം',
+    welcome_back: 'സ്വാഗതം',
+    greeting: 'നമസ്കാരം, രമേഷ്',
+    badge_active: '● സജീവം',
+    farmer_location: '📍 പെരുങ്കുടി ഗ്രാമം, തമിഴ്നാട് · ID: TN-88291',
+    total_sold: 'ആകെ വിറ്റത്',
+    disbursed: 'ലഭിച്ച തുക',
+    passes: 'പാസുകൾ',
+    valid_count: '01 സാധുവായത്',
+    support_strip_title: 'കർഷക സഹായ ഡെസ്ക് · ടോൾ ഫ്രീ',
+    support_strip_desc: 'എസ്എംഎസ് അലേർട്ടുകൾ, ഹെൽപ്പ്‌ലൈൻ 1800-419-0900, അല്ലെങ്കിൽ സി.എസ്.സി കേന്ദ്രം.',
+    msp_rates_title: 'ഇന്നത്തെ താങ്ങുവില (MSP) നിരക്കുകൾ',
+    live_sync: 'തത്സമയ നിരക്കുകൾ',
+    crop_wheat: 'ഗോതമ്പ്',
+    crop_paddy: 'നെല്ല്',
+    crop_cotton: 'പരുത്തി',
+    per_quintal: 'ക്വിന്റലിന്',
+    steady: 'മാറ്റമില്ല',
+    pass_section_title: 'നിങ്ങളുടെ സംഭരണ ഗേറ്റ് പാസ്',
+    manage_pass: 'മാറ്റുക',
+    pass_badge: '✓ സ്ഥിരീകരിച്ച ഗേറ്റ് ബുക്കിംഗ്',
+    depot_location: 'സംഭരണ കേന്ദ്ര വിലാസം',
+    slot_window: '◷ സ്ലോട്ട് സമയം',
+    today_tomorrow: 'நாಳೆ',
+    commodity_volume: '▣ വിളയും അളവും',
+    paddy_crop: 'നെല്ല് (ഗ്രേഡ് A)',
+    queue_low: 'കുറഞ്ഞ കാത്തിരിപ്പ് സമയം · ~15 മിനിറ്റ്',
+    gate_accepting: 'ഗേറ്റ് പ്രവേശനം ആരംഭിച്ചു',
+    btn_track_produce: 'തത്സമയ സ്ഥിതി അറിയുക',
+    book_slot_title: 'സംഭരണ സ്ലോട്ട് ബുക്ക് ചെയ്യുക',
+    book_slot_subtitle: 'വിളയും കേന്ദ്രവും സമയവും തിരഞ്ഞെടുക്കുക.',
+    lbl_select_crop: 'വിള തിരഞ്ഞെടുക്കുക',
+    lbl_procurement_date: 'സംഭരണ തീയതി',
+    lbl_estimated_qty: 'പ്രതീക്ഷിക്കുന്ന ഭാരം (കിലോ)',
+    lbl_choose_slot: 'കേന്ദ്രവും സമയവും തിരഞ്ഞെടുക്കുക',
+    crowd_low: 'കുറഞ്ഞ തിരക്ക്',
+    crowd_mod: 'മിതമായ തിരക്ക്',
+    crowd_high: 'കൂടുതൽ തിരക്ക്',
+    btn_confirm_slot: 'സ്ലോട്ട് സ്ഥിരീകരിക്കുക',
+    btn_save_return: 'സേവ് ചെയ്ത് ഹോമിലേക്ക് പോകുക',
+    btn_close: 'അടയ്ക്കുക',
+    stage_1_title: 'സ്ലോട്ട് ബുക്ക് ചെയ്തു',
+    stage_1_desc: 'ഡിജിറ്റൽ ഗേറ്റ് പാസ് ലഭ്യമായി.',
+    stage_2_title: 'വരവും ഭാര പരിശോധനയും',
+    stage_2_desc: 'വാഹനത്തിന്റെ ആകെ ഭാരം രേഖപ്പെടുത്തി.',
+    stage_3_title: 'ഈർപ്പവും ഗുണനിലവാര പരിശോധനയും',
+    stage_3_desc: 'ഈർപ്പം 14.2% ലാബിൽ പരിശോധിക്കുന്നു.',
+    stage_4_title: 'DBT ബാങ്ക് പേയ്‌മെന്റ്',
+    stage_4_desc: 'തുക നേരിട്ട് ബാങ്ക് അക്കൗണ്ടിലേക്ക് എത്തും.',
+    btn_simulate_stage: '⚡ അടുത്ത ഘട്ടം (ഡെമോ)',
+    sms_notice: 'പരിശോധനയും പേയ്‌മെന്റും പൂർത്തിയാകുമ്പോൾ എസ്എംഎസ് ലഭിക്കും.',
+    support_page_title: 'കർഷക സഹായവും പരാതി പരിഹാരവും',
+    support_hero_title: '24/7 ഹെൽപ്പ്‌ലൈൻ',
+    support_hero_subtitle: 'നിങ്ങളുടെ മാതൃഭാഷയിൽ ഉദ്യോഗസ്ഥരുമായി സംസാരിക്കുക',
+    register_grievance_title: 'പരാതി നൽകുക',
+    grievance_sub: 'ജില്ലാ സംഭരണ ഓഫീസർ പരാതി പരിശോധിക്കും.',
+    lbl_category: 'വിഭാഗം',
+    cat_payment: 'പേയ്‌മെന്റ് / DBT കാലതാമസം',
+    cat_quality: 'ഗുണനിലവാര തർക്കം',
+    cat_slot: 'സ്ലോട്ട് / ഗേറ്റ് പ്രവേശന പ്രശ്നം',
+    cat_staff: 'ജീവനക്കാരുടെ പെരുമാറ്റം / സഹായം',
+    cat_other: 'മറ്റ് അന്വേഷണങ്ങൾ',
+    lbl_description: 'വിവരങ്ങൾ രേഖപ്പെടുത്തുക',
+    btn_submit_grievance: 'പരാതി സമർപ്പിക്കുക',
+    nav_home: 'ഹോം',
+    nav_book: 'സ്ലോട്ട് ബുക്ക്',
+    nav_track: 'സ്ഥിതി അറിയുക',
+    nav_support: 'സഹായം',
+    select_language_title: 'ഭാഷ തിരഞ്ഞെടുക്കുക',
+    select_language_sub: 'ആപ്പ് ഉപയോഗിക്കാൻ നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക',
+    rates_synced: 'വിപണി നിരക്കുകൾ അപ്ഡേറ്റ് ചെയ്തു'
+  }
+};
+
+let currentLang = localStorage.getItem('f2m_lang') || 'en';
+if (!I18N[currentLang]) currentLang = 'en';
+
+function t(key) {
+  const dict = I18N[currentLang] || I18N.en;
+  return dict[key] || I18N.en[key] || key;
+}
+
+function applyLanguage(lang) {
+  if (!I18N[lang]) lang = 'en';
+  currentLang = lang;
+  localStorage.setItem('f2m_lang', lang);
+
+  const curLabel = document.getElementById('lang-current-label');
+  if (curLabel) {
+    const native = I18N[lang].lang_native;
+    curLabel.textContent = lang === 'en' ? 'EN · தமிழ்' : native;
+  }
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (key && t(key)) {
+      el.textContent = t(key);
+    }
+  });
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-code') === lang);
+  });
+}
+
+function initLanguageModal() {
+  const container = document.getElementById('lang-options');
+  if (!container) return;
+  container.innerHTML = '';
+  Object.keys(I18N).forEach(code => {
+    const item = I18N[code];
+    const btn = document.createElement('button');
+    btn.className = 'lang-btn' + (code === currentLang ? ' active' : '');
+    btn.setAttribute('data-code', code);
+    btn.innerHTML = '<div><b>' + item.lang_native + '</b><small>' + item.lang_name + '</small></div>' +
+      (code === currentLang ? '<span style="color:var(--p);font-weight:bold">✓</span>' : '');
+    btn.onclick = () => {
+      applyLanguage(code);
+      hideLangModal();
+      toast('Language switched to ' + item.lang_native);
+    };
+    container.appendChild(btn);
+  });
+}
+
+function showLangModal() {
+  initLanguageModal();
+  document.getElementById('lang-modal').classList.remove('hidden');
+}
+function hideLangModal() {
+  document.getElementById('lang-modal').classList.add('hidden');
+}
+
+function toast(msg) {
+  const old = document.querySelector('.toast');
+  if (old) old.remove();
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = '<span>🌾</span><span>' + msg + '</span>';
+  document.body.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = '0';
+    setTimeout(() => el.remove(), 300);
+  }, 3000);
+}
+
+function switchTab(mode) {
+  const isPhone = mode === 'phone';
+  document.getElementById('tab-phone').classList.toggle('active', isPhone);
+  document.getElementById('tab-kisan').classList.toggle('active', !isPhone);
+  document.getElementById('pane-phone').classList.toggle('hidden', !isPhone);
+  document.getElementById('pane-kisan').classList.toggle('hidden', isPhone);
+}
+
+// Request OTP simulation & integration
+function requestOtp() {
+  const phone = document.getElementById('input-phone').value.trim();
+  if (phone.length < 10) {
+    toast('Please enter a valid 10-digit mobile number');
+    return;
+  }
+  const btn = document.getElementById('btn-send-otp');
+  btn.textContent = '⏳ Sending SMS...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    document.getElementById('step-request-otp').classList.add('hidden');
+    document.getElementById('step-verify-otp').classList.remove('hidden');
+    document.getElementById('otp-sent-sub').textContent = 'OTP sent to +91 ' + phone;
+    
+    // Auto populate demo OTP
+    const cells = document.querySelectorAll('.otp-cell');
+    const demoCode = '123456';
+    cells.forEach((cell, idx) => {
+      cell.value = demoCode[idx] || '';
+    });
+    cells[0]?.focus();
+
+    toast(t('otp_sent_toast'));
+    btn.textContent = t('btn_get_otp');
+    btn.disabled = false;
+  }, 600);
+}
+
+function resendOtp() {
+  toast(t('otp_sent_toast'));
+}
+
+function backToPhoneStep() {
+  document.getElementById('step-verify-otp').classList.add('hidden');
+  document.getElementById('step-request-otp').classList.remove('hidden');
+}
+
+function verifyAndLogin() {
+  let otp = '';
+  document.querySelectorAll('.otp-cell').forEach(c => otp += c.value);
+  if (otp.length < 6) {
+    toast('Please enter the complete 6-digit OTP');
+    return;
+  }
+  const btn = document.getElementById('btn-verify-login');
+  btn.textContent = '⏳ Verifying...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    toast(t('login_success'));
+    btn.textContent = '✓ Verified!';
+    // Simulate redirection to farmer dashboard
+    setTimeout(() => {
+      window.location.href = 'index.html#home';
+      toast('Redirecting to Kisan Dashboard...');
+    }, 800);
+  }, 700);
+}
+
+function loginWithKisanId() {
+  const idVal = document.getElementById('input-kisan').value.trim();
+  const pin = document.getElementById('input-pin').value.trim();
+  if (!idVal || !pin) {
+    toast('Please enter your Kisan ID and MPIN');
+    return;
+  }
+  toast(t('login_success'));
+}
+
+// Setup OTP cell auto tab navigation
+document.addEventListener('DOMContentLoaded', () => {
+  applyLanguage(currentLang);
+
+  const langTrigger = document.getElementById('lang-trigger');
+  if (langTrigger) langTrigger.onclick = showLangModal;
+
+  const closeLangBtn = document.getElementById('close-lang-modal');
+  if (closeLangBtn) closeLangBtn.onclick = hideLangModal;
+
+  const langModal = document.getElementById('lang-modal');
+  if (langModal) {
+    langModal.onclick = (e) => {
+      if (e.target === langModal) hideLangModal();
+    };
+  }
+
+  const cells = document.querySelectorAll('.otp-cell');
+  cells.forEach((cell, index) => {
+    cell.addEventListener('input', (e) => {
+      if (cell.value && index < cells.length - 1) {
+        cells[index + 1].focus();
+      }
+    });
+    cell.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !cell.value && index > 0) {
+        cells[index - 1].focus();
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>

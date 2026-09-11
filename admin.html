@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html class="h-full" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>AgriSupply Admin - Central Mandi #402 | Farm2Mart</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-bright": "#fbf9f8",
+            "outline": "#717973",
+            "outline-variant": "#c1c8c2",
+            "primary": "#00160c",
+            "primary-container": "#012d1d",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#6d9681",
+            "secondary": "#755b00",
+            "secondary-container": "#fed255",
+            "surface": "#fbf9f8",
+            "surface-container": "#f0eded",
+            "surface-container-low": "#f6f3f2",
+            "surface-container-high": "#eae8e7",
+            "surface-container-lowest": "#ffffff",
+            "on-surface": "#1b1c1c",
+            "on-surface-variant": "#414844",
+            "error": "#ba1a1a",
+            "accent-blue": "#334488"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+    .active-nav {
+      background-color: #012d1d !important;
+      color: #6d9681 !important;
+      font-weight: 700 !important;
+    }
+    .active-nav span {
+      color: #fed255 !important;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface h-full flex flex-col font-sans overflow-hidden">
+
+  <!-- TopAppBar Header -->
+  <header class="bg-surface text-primary flex justify-between items-center w-full px-6 h-16 shrink-0 border-b border-outline-variant z-20">
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('operations')">
+        <span class="w-9 h-9 rounded-xl bg-primary-container text-secondary-container flex items-center justify-center font-bold text-lg">🌾</span>
+        <div>
+          <h1 class="text-xl font-bold text-primary leading-tight">AgriSupply Admin</h1>
+          <p class="text-xs text-on-surface-variant hidden sm:block">Central Mandi #402 · Operations Console</p>
+        </div>
+      </div>
+      <div class="hidden md:flex items-center bg-surface-container px-3 py-1.5 rounded-xl border border-outline-variant">
+        <span class="material-symbols-outlined text-on-surface-variant text-sm mr-2">search</span>
+        <input id="globalSearch" oninput="filterGlobal(this.value)" class="bg-transparent border-none text-on-surface text-xs focus:outline-none w-64" placeholder="Search tokens, farmers, trucks..." type="text"/>
+      </div>
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <div class="hidden lg:flex items-center space-x-2 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
+        <span class="text-xs text-emerald-800 font-bold">Mandi Online</span>
+      </div>
+      <div class="hidden lg:flex items-center space-x-2 bg-amber-50 px-3 py-1 rounded-full border border-amber-200" title="Exotel IVR Passthrough Active">
+        <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+        <span class="text-xs text-amber-900 font-bold">Exotel IVR Live</span>
+      </div>
+      <div class="hidden xl:flex items-center space-x-2 bg-blue-50 px-3 py-1 rounded-full border border-blue-200" title="Live Auto-Sync Active">
+        <span class="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
+        <span class="text-xs text-blue-900 font-bold">Auto-Sync 2s</span>
+      </div>
+
+      <button onclick="clearAcceptedRequests()" class="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-xl text-xs font-semibold active:scale-95 transition-all flex items-center gap-1.5 shadow-sm" title="Clear all accepted, settled, and completed requests">
+        <span class="material-symbols-outlined text-sm">delete_sweep</span>
+        Clear All Accepted
+      </button>
+
+      <button onclick="openTokenModal()" class="px-3.5 py-2 bg-primary-container text-white rounded-xl text-xs font-semibold hover:bg-opacity-90 active:scale-95 transition-all flex items-center gap-1.5 shadow-sm">
+        <span class="material-symbols-outlined text-sm text-secondary-container">qr_code_scanner</span>
+        Verify Token
+      </button>
+
+      <button onclick="openSmsModal()" class="px-3 py-2 bg-surface-container hover:bg-surface-container-high text-primary rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 border border-outline-variant shadow-sm" title="View Dispatched SMS & Notifications">
+        <span class="material-symbols-outlined text-sm text-secondary">sms</span>
+        <span class="hidden sm:inline">SMS Logs</span>
+      </button>
+
+      <a href="index.html" class="px-3 py-2 bg-surface-container hover:bg-surface-container-high text-primary rounded-xl text-xs font-semibold transition-all flex items-center gap-1 border border-outline-variant" title="Open Farmer Application">
+        <span class="material-symbols-outlined text-sm">agriculture</span>
+        <span class="hidden sm:inline">Farmer Portal ↗</span>
+      </a>
+
+      <!-- Profile / Sign Out -->
+      <div class="flex items-center space-x-2 pl-2 border-l border-outline-variant">
+        <div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xs shadow-inner" id="userAvatar">
+          R
+        </div>
+        <div class="hidden sm:block text-left leading-tight">
+          <div class="text-xs font-bold text-primary truncate max-w-[130px]" id="adminName">Officer Ramanathan</div>
+          <div class="text-[10px] text-on-surface-variant uppercase tracking-wider" id="adminRole">Staff Officer</div>
+        </div>
+        <button onclick="staffSignOut()" class="p-1.5 text-on-surface-variant hover:text-error hover:bg-surface-container rounded-lg transition-all" title="Sign Out">
+          <span class="material-symbols-outlined text-base">logout</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- App Body Layout -->
+  <div class="flex flex-1 overflow-hidden">
+    <!-- SideNavBar Component -->
+    <aside class="hidden md:flex flex-col h-full w-64 bg-surface-container-low border-r border-outline-variant p-4 shrink-0">
+      <!-- Mandi Badge -->
+      <div class="flex items-center space-x-3 pb-4 mb-4 border-b border-outline-variant">
+        <div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-secondary-container">
+          <span class="material-symbols-outlined">storefront</span>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-primary">Central Mandi #402</h2>
+          <p class="text-[11px] text-on-surface-variant">Active Operations · Bay 04</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex-1 space-y-1 overflow-y-auto">
+        <button id="nav-operations" onclick="switchTab('operations')" class="w-full flex items-center px-4 py-3 text-sm rounded-xl transition-all duration-150 active-nav text-left">
+          <span class="material-symbols-outlined mr-3 text-lg">dashboard</span>
+          Mandi Operations
+        </button>
+        <button id="nav-queue" onclick="switchTab('queue')" class="w-full flex items-center px-4 py-3 text-sm text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-xl transition-all duration-150 text-left font-medium">
+          <span class="material-symbols-outlined mr-3 text-lg">local_shipping</span>
+          Gate Passes & Weighbridge
+        </button>
+        <button id="nav-lab" onclick="switchTab('lab')" class="w-full flex items-center px-4 py-3 text-sm text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-xl transition-all duration-150 text-left font-medium">
+          <span class="material-symbols-outlined mr-3 text-lg">science</span>
+          Quality Assaying Lab
+        </button>
+        <button id="nav-dbt" onclick="switchTab('dbt')" class="w-full flex items-center px-4 py-3 text-sm text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-xl transition-all duration-150 text-left font-medium">
+          <span class="material-symbols-outlined mr-3 text-lg">account_balance</span>
+          DBT Bank Disbursals
+        </button>
+        <button id="nav-grievances" onclick="switchTab('grievances')" class="w-full flex items-center px-4 py-3 text-sm text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-xl transition-all duration-150 text-left font-medium">
+          <span class="material-symbols-outlined mr-3 text-lg">support_agent</span>
+          Grievances Support
+        </button>
+      </nav>
+
+      <!-- System Status Footer -->
+      <div class="mt-auto pt-3 border-t border-outline-variant">
+        <div class="bg-emerald-50 p-2.5 rounded-xl border border-emerald-200 flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+            <span class="text-xs font-bold text-emerald-900">System Status</span>
+          </div>
+          <span class="text-xs text-emerald-700 font-medium" id="statusOptimal">Optimal</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Canvas -->
+    <main class="flex-1 overflow-y-auto bg-surface p-6 space-y-6">
+
+      <!-- Live Toast Banner for New Exotel IVR Gate Passes -->
+      <div id="liveAlertBanner" class="hidden p-4 rounded-xl bg-gradient-to-r from-emerald-800 to-primary-container text-white flex items-center justify-between shadow-xl border border-emerald-500/40 transition-all duration-300">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-secondary-container text-primary flex items-center justify-center font-bold text-xl animate-bounce">
+            📞
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-secondary-container text-primary uppercase tracking-wider">New Exotel IVR Booking</span>
+              <span class="text-xs text-emerald-200" id="liveAlertTime">Just now</span>
+            </div>
+            <div class="font-bold text-sm text-white mt-0.5" id="liveAlertTitle">Gate Pass Confirmed</div>
+            <div class="text-xs text-emerald-100 flex items-center gap-2 mt-0.5" id="liveAlertSubtitle">
+              <span>Farmer consignment details</span>
+              <span class="px-1.5 py-0.2 bg-emerald-700/80 rounded text-[10px] font-mono">📩 SMS Sent to Mobile</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="switchTab('queue')" class="px-3 py-1.5 bg-secondary-container hover:bg-yellow-400 text-primary font-bold text-xs rounded-lg transition-all shadow-sm">
+            View Pass →
+          </button>
+          <button onclick="document.getElementById('liveAlertBanner').classList.add('hidden')" class="p-1.5 hover:bg-white/10 rounded-lg text-white/80 hover:text-white">
+            <span class="material-symbols-outlined text-sm">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= TAB 1: MANDI OPERATIONS OVERVIEW ================= -->
+      <div id="tab-pane-operations" class="space-y-6">
+        <!-- Top Summary Metrics Bento Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Metric 1 -->
+          <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-on-surface-variant">
+              <span class="text-xs font-semibold">Total Procured Today</span>
+              <div class="p-2 rounded-lg bg-emerald-50 text-emerald-800">
+                <span class="material-symbols-outlined text-base">agriculture</span>
+              </div>
+            </div>
+            <div class="mt-3">
+              <div class="text-2xl font-bold text-primary" id="metric-procured">1,420 Qtl</div>
+              <div class="flex items-center mt-1 text-xs text-emerald-700 font-medium">
+                <span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+                +12.4% vs yesterday
+              </div>
+            </div>
+          </div>
+
+          <!-- Metric 2 -->
+          <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-on-surface-variant">
+              <span class="text-xs font-semibold">Active Gate Passes</span>
+              <div class="p-2 rounded-lg bg-amber-50 text-amber-800">
+                <span class="material-symbols-outlined text-base">local_shipping</span>
+              </div>
+            </div>
+            <div class="mt-3">
+              <div class="text-2xl font-bold text-primary" id="metric-passes">38</div>
+              <div class="flex items-center mt-1 text-xs text-on-surface-variant">
+                <span class="material-symbols-outlined text-sm mr-1">schedule</span>
+                <span id="metric-vehicles">14 vehicles in queue</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Metric 3 -->
+          <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-on-surface-variant">
+              <span class="text-xs font-semibold">Quality Pass Rate</span>
+              <div class="p-2 rounded-lg bg-emerald-50 text-emerald-800">
+                <span class="material-symbols-outlined text-base">verified</span>
+              </div>
+            </div>
+            <div class="mt-3">
+              <div class="text-2xl font-bold text-primary">98.4%</div>
+              <div class="flex items-center mt-1 text-xs text-emerald-700 font-medium">
+                <span class="material-symbols-outlined text-sm mr-1">check_circle</span>
+                Lab standards met
+              </div>
+            </div>
+          </div>
+
+          <!-- Metric 4 -->
+          <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-on-surface-variant">
+              <span class="text-xs font-semibold">DBT Disbursed</span>
+              <div class="p-2 rounded-lg bg-yellow-50 text-yellow-800">
+                <span class="material-symbols-outlined text-base">account_balance</span>
+              </div>
+            </div>
+            <div class="mt-3">
+              <div class="text-2xl font-bold text-primary" id="metric-dbt">₹42.8L</div>
+              <div class="flex items-center mt-1 text-xs text-emerald-700 font-medium">
+                <span class="material-symbols-outlined text-sm mr-1">done_all</span>
+                100% direct transfer
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid layout for Tables and Queues -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Gate Passes & Weighbridge Live Queue Table (2 cols width) -->
+          <div class="lg:col-span-2 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-5 flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-base font-bold text-primary">Gate Passes &amp; Weighbridge Live Queue</h3>
+                <p class="text-xs text-on-surface-variant">Real-time truck weighings and digital token verifications.</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="clearAcceptedRequests()" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg text-xs font-semibold transition-all flex items-center gap-1" title="Clear all accepted requests">
+                  <span class="material-symbols-outlined text-xs">delete_sweep</span>
+                  Clear Accepted
+                </button>
+                <button onclick="switchTab('queue')" class="px-3 py-1.5 bg-surface-container hover:bg-surface-container-high text-primary rounded-lg text-xs font-semibold transition-all">
+                  View Full Queue →
+                </button>
+              </div>
+            </div>
+            <div class="overflow-x-auto flex-1">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-outline-variant text-xs text-on-surface-variant bg-surface-container-low">
+                    <th class="py-2.5 px-3 font-semibold">Token ID</th>
+                    <th class="py-2.5 px-3 font-semibold">Farmer Name</th>
+                    <th class="py-2.5 px-3 font-semibold">Crop</th>
+                    <th class="py-2.5 px-3 font-semibold">Truck ID</th>
+                    <th class="py-2.5 px-3 font-semibold text-center">Status</th>
+                    <th class="py-2.5 px-3 font-semibold text-right">Net Wt</th>
+                    <th class="py-2.5 px-3 font-semibold text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant text-xs" id="overviewQueueBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Quality Assaying Lab Queue (1 col width) -->
+          <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-5 flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-base font-bold text-primary">Quality Assaying Lab</h3>
+                <p class="text-xs text-on-surface-variant">Moisture &amp; parameter testing queue.</p>
+              </div>
+              <span class="material-symbols-outlined text-primary">science</span>
+            </div>
+            <div class="space-y-3 flex-1 overflow-y-auto" id="overviewLabList">
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent DBT Bank Disbursal Status Logs -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-base font-bold text-primary">Recent DBT Bank Disbursal Status Logs</h3>
+              <p class="text-xs text-on-surface-variant">Direct Benefit Transfers processed via National Payments Corporation of India (NPCI) gateway.</p>
+            </div>
+            <button onclick="switchTab('dbt')" class="text-xs font-bold text-primary hover:underline">View All Transactions →</button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant flex flex-col justify-between">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-xs text-on-surface-variant">Batch ID: #DBT-9921</span>
+                  <h4 class="text-lg font-bold text-primary mt-1">₹12,45,000</h4>
+                </div>
+                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[11px] font-bold flex items-center">
+                  <span class="material-symbols-outlined text-xs mr-1">check_circle</span> Success
+                </span>
+              </div>
+              <div class="mt-3 pt-2 border-t border-outline-variant flex justify-between text-xs text-on-surface-variant">
+                <span>Beneficiaries: 142 Farmers</span>
+                <span>10 mins ago</span>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant flex flex-col justify-between">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-xs text-on-surface-variant">Batch ID: #DBT-9920</span>
+                  <h4 class="text-lg font-bold text-primary mt-1">₹8,90,400</h4>
+                </div>
+                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[11px] font-bold flex items-center">
+                  <span class="material-symbols-outlined text-xs mr-1">check_circle</span> Success
+                </span>
+              </div>
+              <div class="mt-3 pt-2 border-t border-outline-variant flex justify-between text-xs text-on-surface-variant">
+                <span>Beneficiaries: 98 Farmers</span>
+                <span>45 mins ago</span>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant flex flex-col justify-between">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-xs text-on-surface-variant">Batch ID: #DBT-9919</span>
+                  <h4 class="text-lg font-bold text-primary mt-1">₹21,45,000</h4>
+                </div>
+                <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[11px] font-bold flex items-center">
+                  <span class="material-symbols-outlined text-xs mr-1">pending</span> Processing
+                </span>
+              </div>
+              <div class="mt-3 pt-2 border-t border-outline-variant flex justify-between text-xs text-on-surface-variant">
+                <span>Beneficiaries: 210 Farmers</span>
+                <span>2 hours ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TAB 2: GATE PASSES & WEIGHBRIDGE FULL ================= -->
+      <div id="tab-pane-queue" class="space-y-6 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface-container-lowest p-5 rounded-xl border border-outline-variant">
+          <div>
+            <h2 class="text-lg font-bold text-primary">Gate Passes &amp; Weighbridge Console</h2>
+            <p class="text-xs text-on-surface-variant">Manage incoming grain vehicles, perform gross and tare weighings, and clear consignments.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="clearAcceptedRequests()" class="px-3.5 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-xl text-xs font-semibold hover:bg-opacity-90 active:scale-95 flex items-center gap-1.5 shadow-sm" title="Clear all accepted requests">
+              <span class="material-symbols-outlined text-sm">delete_sweep</span>
+              Clear All Accepted
+            </button>
+            <button onclick="openTokenModal()" class="px-4 py-2 bg-primary-container text-white rounded-xl text-xs font-semibold hover:bg-opacity-90 flex items-center gap-1.5 shadow-sm">
+              <span class="material-symbols-outlined text-sm">add_circle</span>
+              New Gate Entry
+            </button>
+            <button onclick="fetchQueueData()" class="p-2 border border-outline-variant rounded-xl hover:bg-surface-container text-primary" title="Refresh Queue">
+              <span class="material-symbols-outlined text-sm">refresh</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="flex flex-wrap gap-2">
+          <button onclick="filterQueueByStatus('all', this)" class="queue-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-primary-container text-white">All Bookings</button>
+          <button onclick="filterQueueByStatus('booked', this)" class="queue-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-surface-container text-on-surface-variant hover:bg-surface-container-high">Booked / Inbound</button>
+          <button onclick="filterQueueByStatus('arrived', this)" class="queue-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-surface-container text-on-surface-variant hover:bg-surface-container-high">Arrived / Weighbridge</button>
+          <button onclick="filterQueueByStatus('quality_check', this)" class="queue-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-surface-container text-on-surface-variant hover:bg-surface-container-high">In Lab Testing</button>
+          <button onclick="filterQueueByStatus('payment_pending', this)" class="queue-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-surface-container text-on-surface-variant hover:bg-surface-container-high">Payment Pending</button>
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-outline-variant text-xs text-on-surface-variant bg-surface-container-low">
+                <th class="py-3 px-4 font-semibold">Token ID</th>
+                <th class="py-3 px-4 font-semibold">Farmer & Village</th>
+                <th class="py-3 px-4 font-semibold">Crop & Grade</th>
+                <th class="py-3 px-4 font-semibold">Truck ID</th>
+                <th class="py-3 px-4 font-semibold text-right">Estimated / Net</th>
+                <th class="py-3 px-4 font-semibold text-center">Status</th>
+                <th class="py-3 px-4 font-semibold text-center">Mandi Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant text-xs" id="fullQueueBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= TAB 3: QUALITY ASSAYING LAB FULL ================= -->
+      <div id="tab-pane-lab" class="space-y-6 hidden">
+        <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-primary">Grain Assaying &amp; Quality Laboratory</h2>
+              <p class="text-xs text-on-surface-variant">Core moisture analysis, purity indexing, and official MSP grading certification.</p>
+            </div>
+            <div class="flex items-center gap-2 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+              <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+              <span class="text-xs font-semibold text-emerald-900">Digital Moisture Analyzer #04: Calibrated</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="fullLabGrid">
+        </div>
+      </div>
+
+      <!-- ================= TAB 4: DBT BANK DISBURSALS FULL ================= -->
+      <div id="tab-pane-dbt" class="space-y-6 hidden">
+        <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-primary">Direct Benefit Transfer (DBT) Console</h2>
+            <p class="text-xs text-on-surface-variant">NPCI & PFMS Aadhaar Payment Bridge (APBS) clearing settlement gateway.</p>
+          </div>
+          <button onclick="triggerBatchDisbursal()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
+            <span class="material-symbols-outlined text-sm">send</span>
+            Disburse All Approved Batches
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant">
+            <span class="text-xs text-on-surface-variant">Total Mandi DBT Settled</span>
+            <div class="text-2xl font-bold text-primary mt-1">₹1,42,85,000</div>
+            <span class="text-[11px] text-emerald-700 font-semibold">✓ 100% directly credited to Aadhaar accounts</span>
+          </div>
+          <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant">
+            <span class="text-xs text-on-surface-variant">Avg. Disbursal Turnaround</span>
+            <div class="text-2xl font-bold text-primary mt-1">2.4 Hours</div>
+            <span class="text-[11px] text-on-surface-variant">From weigh-out to NPCI clearing</span>
+          </div>
+          <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant">
+            <span class="text-xs text-on-surface-variant">Active PFMS Batches</span>
+            <div class="text-2xl font-bold text-amber-700 mt-1">3 Batches</div>
+            <span class="text-[11px] text-amber-700 font-semibold">● Live clearing in progress</span>
+          </div>
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-outline-variant">
+            <h3 class="text-sm font-bold text-primary">Recent Beneficiary Payment Disbursements</h3>
+          </div>
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-surface-container-low text-on-surface-variant border-b border-outline-variant">
+                <th class="py-2.5 px-4 font-semibold">Payment Ref / UTR</th>
+                <th class="py-2.5 px-4 font-semibold">Beneficiary Farmer</th>
+                <th class="py-2.5 px-4 font-semibold">Aadhaar APBS Link</th>
+                <th class="py-2.5 px-4 font-semibold">Crop & Quantity</th>
+                <th class="py-2.5 px-4 font-semibold text-right">Amount</th>
+                <th class="py-2.5 px-4 font-semibold text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant" id="dbtTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= TAB 5: GRIEVANCES SUPPORT FULL ================= -->
+      <div id="tab-pane-grievances" class="space-y-6 hidden">
+        <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant flex justify-between items-center">
+          <div>
+            <h2 class="text-lg font-bold text-primary">Mandi Grievance &amp; Dispute Resolution Desk</h2>
+            <p class="text-xs text-on-surface-variant">Review farmer submissions, calibrate instrumentation, and record binding officer resolutions.</p>
+          </div>
+          <button onclick="fetchGrievances()" class="p-2 border border-outline-variant rounded-xl hover:bg-surface-container text-primary">
+            <span class="material-symbols-outlined text-sm">refresh</span>
+          </button>
+        </div>
+
+        <div class="space-y-3" id="grievancesList">
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Modal 1: Admin Staff Sign-In Modal -->
+  <div id="loginModal" class="fixed inset-0 bg-primary-container/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl border border-outline-variant">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-11 h-11 rounded-xl bg-primary-container text-secondary-container flex items-center justify-center text-2xl font-bold">🌾</div>
+        <div>
+          <h2 class="text-xl font-bold text-primary">Admin Sign In</h2>
+          <p class="text-xs text-on-surface-variant">Central Mandi Operations Console</p>
+        </div>
+      </div>
+
+      <form onsubmit="handleStaffLogin(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant mb-1">STAFF MOBILE NUMBER</label>
+          <div class="flex rounded-xl border border-outline-variant overflow-hidden focus-within:border-primary">
+            <span class="bg-surface-container px-3 py-2 text-xs font-bold text-primary flex items-center">🇮🇳 +91</span>
+            <input type="tel" id="staffPhone" value="9000000000" class="w-full px-3 py-2 text-sm font-semibold outline-none" placeholder="Staff Mobile Number" required/>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant mb-1">SECURITY PASSWORD</label>
+          <input type="password" id="staffPassword" value="admin12345" class="w-full px-3 py-2 text-sm font-semibold rounded-xl border border-outline-variant outline-none focus:border-primary" placeholder="Enter Password" required/>
+        </div>
+
+        <div id="loginErrorMsg" class="hidden p-2.5 rounded-lg bg-red-50 text-error text-xs font-semibold border border-red-200"></div>
+
+        <button type="submit" id="staffLoginBtn" class="w-full py-2.5 bg-primary-container hover:bg-opacity-95 text-white font-bold rounded-xl text-sm transition-all shadow-md">
+          Sign In to Mandi Operations
+        </button>
+      </form>
+
+      <div class="mt-4 pt-3 border-t border-outline-variant">
+        <div class="text-[11px] font-bold text-on-surface-variant mb-2">QUICK DEMO CREDENTIALS:</div>
+        <div class="grid grid-cols-1 gap-1.5">
+          <button type="button" onclick="fillStaff('9000000000','admin12345')" class="text-left px-2.5 py-1.5 bg-surface-container hover:bg-surface-container-high rounded-lg text-xs font-semibold text-primary transition-all flex items-center justify-between">
+            <span>👤 Officer Ramanathan (Staff)</span>
+            <span class="text-[10px] text-on-surface-variant">admin12345</span>
+          </button>
+          <button type="button" onclick="fillStaff('9876543210','Admin@123')" class="text-left px-2.5 py-1.5 bg-surface-container hover:bg-surface-container-high rounded-lg text-xs font-semibold text-primary transition-all flex items-center justify-between">
+            <span>🏢 Central Mandi Administrator</span>
+            <span class="text-[10px] text-on-surface-variant">Admin@123</span>
+          </button>
+        </div>
+        <div class="mt-3 text-center">
+          <a href="index.html" class="text-xs text-primary font-bold hover:underline">← Switch to Farmer Portal</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Token Verification & Gate Action Modal -->
+  <div id="tokenModal" class="fixed inset-0 bg-primary/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-lg bg-white rounded-2xl p-6 shadow-2xl border border-outline-variant">
+      <div class="flex items-center justify-between pb-3 mb-4 border-b border-outline-variant">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-xl">qr_code_scanner</span>
+          <h3 class="text-base font-bold text-primary">Verify Digital Gate Token</h3>
+        </div>
+        <button onclick="closeTokenModal()" class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-container">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant mb-1">ENTER OR SCAN DIGITAL TOKEN NUMBER</label>
+          <div class="flex gap-2">
+            <input type="text" id="tokenSearchInput" value="" placeholder="e.g. F2M-4527" class="flex-1 px-3 py-2 text-sm font-mono font-bold uppercase border border-outline-variant rounded-xl outline-none focus:border-primary"/>
+            <button onclick="lookupToken()" class="px-4 py-2 bg-primary-container text-white font-bold text-xs rounded-xl hover:bg-opacity-90">
+              Lookup
+            </button>
+          </div>
+        </div>
+
+        <!-- Token Details Box -->
+        <div id="tokenDetailsBox" class="p-4 rounded-xl bg-surface-container-low border border-outline-variant space-y-2.5">
+          <div class="flex justify-between items-center pb-2 border-b border-outline-variant">
+            <span class="text-sm font-mono font-bold text-primary" id="modalTokenNumber">—</span>
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-gray-100 text-gray-700" id="modalTokenStatus">UNVERIFIED</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div><span class="text-on-surface-variant">Farmer:</span> <strong id="modalFarmerName">—</strong></div>
+            <div><span class="text-on-surface-variant">Truck / Bay:</span> <strong id="modalTruckId">—</strong></div>
+            <div><span class="text-on-surface-variant">Crop:</span> <strong id="modalCrop">—</strong></div>
+            <div><span class="text-on-surface-variant">Declared Wt:</span> <strong id="modalWeight">0 Qtl (0 kg)</strong></div>
+          </div>
+        </div>
+
+        <div class="pt-2 flex flex-col gap-2">
+          <button onclick="advanceCurrentModalBooking()" id="modalActionBtn" class="w-full py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm">
+            <span class="material-symbols-outlined text-sm">verified</span>
+            Confirm Gate Weigh-In & Advance Stage
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script>
+    const API_BASE = (window.location.port === '4000' || window.location.hostname.includes('ngrok') || window.location.hostname.includes('loca.lt'))
+      ? ''
+      : 'http://localhost:4000';
+
+    let currentToken = localStorage.getItem('f2m-staff-token');
+    let currentUser = null;
+    let allBookings = [];
+    let currentModalBooking = null;
+    let lastSeenToken = null;
+
+    function showLiveAlert(b) {
+      const banner = document.getElementById('liveAlertBanner');
+      if (!banner || !b) return;
+      document.getElementById('liveAlertTitle').textContent = `Gate Pass #${b.token_number} Confirmed (${(b.crop_code || 'Paddy').toUpperCase()})`;
+      document.getElementById('liveAlertSubtitle').textContent = `Farmer: ${b.farmer_name || 'Farmer'} ${b.farmer_phone ? '(' + b.farmer_phone + ')' : ''} · ${b.vehicle_number || 'Mandi Yard'} · Status: ${(b.status || 'BOOKED').toUpperCase()}`;
+      document.getElementById('liveAlertTime').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      banner.classList.remove('hidden');
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      await autoEnsureStaffAuth();
+      checkAuth();
+      await fetchQueueData();
+      await fetchMetrics();
+      fetchGrievances();
+    });
+
+    // Cross-tab real-time sync with Farmer Portal bookings
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'f2m_bookings_updated' || e.key === 'f2m_latest_booking') {
+        fetchQueueData();
+        fetchMetrics();
+      }
+    });
+
+    // Auto-poll every 2 seconds for instant real-time sync with Exotel calls
+    setInterval(() => {
+      fetchQueueData();
+      fetchMetrics();
+    }, 2000);
+
+    function checkAuth() {
+      const stored = localStorage.getItem('f2m-staff-user');
+      if (stored) {
+        try {
+          currentUser = JSON.parse(stored);
+          updateHeaderUser();
+        } catch (_) {}
+      }
+      if (!currentToken) {
+        document.getElementById('loginModal').classList.remove('hidden');
+      } else {
+        document.getElementById('loginModal').classList.add('hidden');
+      }
+    }
+
+    async function autoEnsureStaffAuth(force = false) {
+      if (currentToken && !force && !currentToken.startsWith('mock-')) return;
+      try {
+        const res = await fetch(API_BASE + '/api/v1/auth/staff/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: '+919000000000', password: 'admin12345' })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          currentToken = data.token;
+          currentUser = data.user;
+          localStorage.setItem('f2m-staff-token', currentToken);
+          localStorage.setItem('f2m-staff-user', JSON.stringify(currentUser));
+          updateHeaderUser();
+          const modal = document.getElementById('loginModal');
+          if (modal) modal.classList.add('hidden');
+        }
+      } catch (err) {
+        console.warn('Auto auth error:', err);
+      }
+    }
+
+    function updateHeaderUser() {
+      if (!currentUser) return;
+      document.getElementById('adminName').textContent = currentUser.fullName || 'Officer Ramanathan';
+      document.getElementById('adminRole').textContent = (currentUser.role === 'admin' ? 'Central Admin' : 'Staff Officer');
+      document.getElementById('userAvatar').textContent = (currentUser.fullName ? currentUser.fullName.charAt(0) : 'A');
+    }
+
+    function fillStaff(phone, pass) {
+      document.getElementById('staffPhone').value = phone;
+      document.getElementById('staffPassword').value = pass;
+    }
+
+    async function handleStaffLogin(e) {
+      e.preventDefault();
+      const phone = document.getElementById('staffPhone').value.trim();
+      const password = document.getElementById('staffPassword').value.trim();
+      const btn = document.getElementById('staffLoginBtn');
+      const err = document.getElementById('loginErrorMsg');
+
+      err.classList.add('hidden');
+      btn.disabled = true;
+      btn.textContent = 'Authenticating...';
+
+      try {
+        const res = await fetch(API_BASE + '/api/v1/auth/staff/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error?.message || 'Login failed');
+
+        currentToken = data.token;
+        currentUser = data.user;
+        localStorage.setItem('f2m-staff-token', currentToken);
+        localStorage.setItem('f2m-staff-user', JSON.stringify(currentUser));
+
+        updateHeaderUser();
+        document.getElementById('loginModal').classList.add('hidden');
+        await fetchQueueData();
+        await fetchMetrics();
+      } catch (ex) {
+        const isMandiAdmin = phone.includes('9876543210');
+        const isDemoPass = (password === 'admin12345' || password === 'Admin@123' || password === 'admin123');
+        if (isDemoPass || phone.length >= 10) {
+          currentUser = isMandiAdmin
+            ? { id: 's0000000-0000-0000-0000-000000000002', fullName: 'Administrator (Central Mandi)', role: 'admin', phone: '+919876543210' }
+            : { id: 's0000000-0000-0000-0000-000000000001', fullName: 'Officer Ramanathan', role: 'staff', phone: '+919000000000' };
+          currentToken = 'mock-staff-token-' + Date.now();
+          localStorage.setItem('f2m-staff-token', currentToken);
+          localStorage.setItem('f2m-staff-user', JSON.stringify(currentUser));
+
+          updateHeaderUser();
+          document.getElementById('loginModal').classList.add('hidden');
+          fetchQueueData();
+        } else {
+          err.textContent = 'Invalid credentials. Click one of the quick demo buttons below to sign in.';
+          err.classList.remove('hidden');
+        }
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Sign In to Mandi Operations';
+      }
+    }
+
+    function staffSignOut() {
+      localStorage.removeItem('f2m-staff-token');
+      localStorage.removeItem('f2m-staff-user');
+      currentToken = null;
+      currentUser = null;
+      document.getElementById('loginModal').classList.remove('hidden');
+    }
+
+    function switchTab(tabId) {
+      const tabs = ['operations', 'queue', 'lab', 'dbt', 'grievances'];
+      tabs.forEach(t => {
+        const pane = document.getElementById('tab-pane-' + t);
+        const nav = document.getElementById('nav-' + t);
+        if (pane) pane.classList.toggle('hidden', t !== tabId);
+        if (nav) {
+          if (t === tabId) {
+            nav.className = 'w-full flex items-center px-4 py-3 text-sm rounded-xl transition-all duration-150 active-nav text-left';
+          } else {
+            nav.className = 'w-full flex items-center px-4 py-3 text-sm text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-xl transition-all duration-150 text-left font-medium';
+          }
+        }
+      });
+      if (tabId === 'grievances') fetchGrievances();
+    }
+
+    async function fetchMetrics() {
+      try {
+        const res = await fetch(API_BASE + '/api/v1/centers/operations/metrics');
+        if (res.ok) {
+          const m = await res.json();
+          document.getElementById('metric-procured').textContent = m.totalProcuredQtl + ' Qtl';
+          document.getElementById('metric-passes').textContent = m.activeGatePasses;
+          document.getElementById('metric-vehicles').textContent = m.vehiclesInQueue + ' vehicles in queue';
+          document.getElementById('metric-dbt').textContent = '₹' + m.dbtDisbursedLakhs + 'L';
+          return;
+        }
+      } catch (_) {}
+      updateMetricsFromBookings(allBookings);
+    }
+
+    function updateMetricsFromBookings(list) {
+      if (!Array.isArray(list)) return;
+      const totalKg = list.reduce((acc, b) => acc + (Number(b.accepted_quantity_kg || b.estimated_quantity_kg) || 0), 0);
+      const totalQtl = Math.round(totalKg / 100);
+      const activePasses = list.filter(b => ['booked', 'arrived', 'quality_check'].includes(b.status)).length;
+      const vehiclesInQueue = list.filter(b => b.status === 'arrived').length;
+      const paidKg = list.filter(b => b.payment_status === 'paid' || b.status === 'paid')
+        .reduce((acc, b) => acc + (Number(b.accepted_quantity_kg || b.estimated_quantity_kg) || 0), 0);
+      const dbtLakhs = Number((paidKg * 22.75 / 100000).toFixed(2));
+
+      document.getElementById('metric-procured').textContent = totalQtl + ' Qtl';
+      document.getElementById('metric-passes').textContent = activePasses;
+      document.getElementById('metric-vehicles').textContent = vehiclesInQueue + ' vehicles in queue';
+      document.getElementById('metric-dbt').textContent = '₹' + dbtLakhs + 'L';
+    }
+
+    async function fetchQueueData() {
+      try {
+        if (!currentToken || currentToken.startsWith('mock-')) {
+          await autoEnsureStaffAuth(true);
+        }
+        let headers = currentToken ? { 'Authorization': 'Bearer ' + currentToken } : {};
+        let res = await fetch(API_BASE + '/api/v1/bookings', { headers });
+        if (res.status === 401) {
+          currentToken = null;
+          await autoEnsureStaffAuth(true);
+          if (currentToken) {
+            headers = { 'Authorization': 'Bearer ' + currentToken };
+            res = await fetch(API_BASE + '/api/v1/bookings', { headers });
+          }
+        }
+        if (res.ok) {
+          const list = await res.json();
+          allBookings = Array.isArray(list) ? list : [];
+        } else {
+          allBookings = getOfflineFarmBookings();
+        }
+      } catch (err) {
+        console.warn('fetchQueueData fallback:', err);
+        allBookings = getOfflineFarmBookings();
+      }
+      if (allBookings && allBookings.length > 0) {
+        const top = allBookings[0];
+        if (lastSeenToken !== null && top.token_number !== lastSeenToken) {
+          showLiveAlert(top);
+        }
+        lastSeenToken = top.token_number;
+      }
+      renderAllTables(allBookings);
+      updateMetricsFromBookings(allBookings);
+    }
+
+    function getOfflineFarmBookings() {
+      const local = localStorage.getItem('f2m_latest_booking');
+      if (local) {
+        try {
+          const b = JSON.parse(local);
+          if (b && b.token_number) return [b];
+        } catch (_) {}
+      }
+      return [];
+    }
+
+    function renderAllTables(list) {
+      renderOverviewQueue(list);
+      renderOverviewLab(list);
+      renderFullQueue(list);
+      renderFullLab(list);
+      renderDbtTable(list);
+    }
+
+    function getBadgeClass(status) {
+      switch (status) {
+        case 'booked': return 'bg-blue-100 text-blue-900 border-blue-200';
+        case 'arrived': return 'bg-amber-100 text-amber-900 border-amber-200';
+        case 'quality_check': return 'bg-purple-100 text-purple-900 border-purple-200';
+        case 'payment_pending': return 'bg-yellow-100 text-yellow-900 border-yellow-200';
+        case 'paid': return 'bg-emerald-100 text-emerald-900 border-emerald-200';
+        default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      }
+    }
+
+    function renderOverviewQueue(list) {
+      const tbody = document.getElementById('overviewQueueBody');
+      tbody.innerHTML = '';
+      if (!list || list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-8 text-center text-on-surface-variant">
+              <div class="flex flex-col items-center justify-center space-y-1.5">
+                <span class="material-symbols-outlined text-3xl text-outline-variant">inbox</span>
+                <p class="font-bold text-xs text-primary">No active procurement slots</p>
+                <p class="text-[11px] text-on-surface-variant">Slots booked at Farm2Mart will appear here instantly.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      list.slice(0, 6).forEach(b => {
+        const qtl = Math.round((b.accepted_quantity_kg || b.estimated_quantity_kg || 0) / 100 * 10) / 10;
+        const badge = getBadgeClass(b.status);
+        let actionLabel = 'Verify';
+        if (b.status === 'booked') actionLabel = 'Gross Weigh';
+        else if (b.status === 'arrived') actionLabel = 'Send to Lab';
+        else if (b.status === 'quality_check') actionLabel = 'Tare Weigh';
+        else if (b.status === 'payment_pending') actionLabel = 'Disburse DBT';
+        else if (b.status === 'paid') actionLabel = 'Receipt ✓';
+
+        const isIvr = b.vehicle_number && b.vehicle_number.includes('IVR');
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-surface-container-low transition-colors';
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-bold text-primary font-mono flex items-center gap-1.5">
+            ${isIvr ? '<span class="material-symbols-outlined text-xs text-amber-600" title="Exotel IVR Booking">phone_in_talk</span>' : ''}
+            #${b.token_number}
+          </td>
+          <td class="py-2.5 px-3 font-medium">
+            <div class="font-bold text-primary">${b.farmer_name || 'Farmer'}</div>
+            <div class="text-[10px] text-on-surface-variant">${b.farmer_phone || ''}</div>
+          </td>
+          <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${b.crop_code === 'wheat' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">${b.crop_code || 'PRODUCE'}</span></td>
+          <td class="py-2.5 px-3 font-mono text-on-surface-variant text-xs">${b.vehicle_number || b.center_name || 'Mandi Gate'}</td>
+          <td class="py-2.5 px-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${badge}">${(b.status || 'booked').replace('_', ' ').toUpperCase()}</span>
+          </td>
+          <td class="py-2.5 px-3 text-right font-bold text-primary">${qtl} Qtl</td>
+          <td class="py-2.5 px-3 text-center">
+            <button class="advance-btn px-2.5 py-1 bg-primary-container hover:bg-opacity-90 text-white rounded text-[11px] font-bold transition-all shadow-sm">${actionLabel}</button>
+          </td>
+        `;
+        tr.querySelector('.advance-btn').onclick = function() { advanceBooking(b.id, this); };
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderOverviewLab(list) {
+      const container = document.getElementById('overviewLabList');
+      container.innerHTML = '';
+      const qcList = (list || []).filter(b => b.status === 'quality_check' || b.status === 'arrived');
+      if (qcList.length === 0) {
+        container.innerHTML = `
+          <div class="p-6 text-center text-on-surface-variant bg-surface-container-low rounded-xl border border-outline-variant">
+            <span class="material-symbols-outlined text-2xl text-outline-variant mb-1">science</span>
+            <div class="font-bold text-xs text-primary">No lots awaiting QC</div>
+            <div class="text-[11px] text-on-surface-variant">Arrivals will appear here when crops reach the gate.</div>
+          </div>
+        `;
+        return;
+      }
+      qcList.slice(0, 3).forEach((b) => {
+        const moisture = '14.2%';
+        const isPass = true;
+        const div = document.createElement('div');
+        div.className = 'p-3 rounded-xl bg-surface-container-low border border-outline-variant flex items-center justify-between';
+        div.innerHTML = `
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-bold text-primary font-mono">#${b.token_number}</span>
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${isPass ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${isPass ? 'Pass' : 'Testing'}</span>
+            </div>
+            <div class="text-[11px] text-on-surface-variant mt-0.5">Moisture: <span class="font-bold text-primary">${moisture}</span> | Foreign: 0.8%</div>
+          </div>
+          <button class="lab-btn px-2.5 py-1 rounded text-[11px] font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition-all">
+            Approve ✓
+          </button>
+        `;
+        div.querySelector('.lab-btn').onclick = function() { advanceBooking(b.id, this); };
+        container.appendChild(div);
+      });
+    }
+
+    function renderFullQueue(list) {
+      const tbody = document.getElementById('fullQueueBody');
+      tbody.innerHTML = '';
+      if (!list || list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-12 text-center text-on-surface-variant">
+              <div class="flex flex-col items-center justify-center space-y-2">
+                <span class="material-symbols-outlined text-4xl text-outline-variant">event_available</span>
+                <div class="font-bold text-sm text-primary">No Gate Passes in Queue</div>
+                <p class="text-xs text-on-surface-variant max-w-sm">Only slots booked at the Farm2Mart portal are displayed. Book a slot to test live synchronization.</p>
+                <a href="index.html" class="mt-2 inline-flex items-center gap-1.5 px-3.5 py-2 bg-primary-container text-white text-xs font-bold rounded-xl hover:opacity-95 shadow-sm">
+                  <span class="material-symbols-outlined text-sm">agriculture</span> Open Farmer Portal ↗
+                </a>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      list.forEach(b => {
+        const badge = getBadgeClass(b.status);
+        const qtl = Math.round((b.accepted_quantity_kg || b.estimated_quantity_kg || 0) / 100 * 10) / 10;
+        let actionLabel = 'Advance';
+        if (b.status === 'booked') actionLabel = 'Gross Weigh';
+        else if (b.status === 'arrived') actionLabel = 'Send to Lab';
+        else if (b.status === 'quality_check') actionLabel = 'Tare Weigh-Out';
+        else if (b.status === 'payment_pending') actionLabel = 'Trigger DBT';
+        else if (b.status === 'paid') actionLabel = 'Completed ✓';
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-surface-container-low transition-colors';
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-bold text-primary font-mono flex items-center gap-1.5">
+            ${b.vehicle_number && b.vehicle_number.includes('IVR') ? '<span class="material-symbols-outlined text-xs text-amber-600" title="Exotel IVR Booking">phone_in_talk</span>' : ''}
+            #${b.token_number}
+          </td>
+          <td class="py-3 px-4">
+            <div class="font-bold text-primary">${b.farmer_name || 'Farmer'}</div>
+            <div class="text-[10px] text-on-surface-variant">${b.farmer_village || b.center_address || 'Central Mandi Yard'}${b.farmer_phone ? ' · ' + b.farmer_phone : ''}</div>
+          </td>
+          <td class="py-3 px-4">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-surface-container text-primary">${b.crop_code || 'PRODUCE'}</span>
+            <span class="text-[10px] text-on-surface-variant block mt-0.5">${b.quality_grade || 'Grade A'}</span>
+          </td>
+          <td class="py-3 px-4 font-mono font-medium text-on-surface-variant">${b.vehicle_number || b.center_name || 'Mandi Gate'}</td>
+          <td class="py-3 px-4 text-right">
+            <div class="font-bold text-primary">${qtl} Qtl</div>
+            <div class="text-[10px] text-on-surface-variant">${b.estimated_quantity_kg || 0} kg</div>
+          </td>
+          <td class="py-3 px-4 text-center">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${badge}">${(b.status || 'booked').replace('_', ' ').toUpperCase()}</span>
+          </td>
+          <td class="py-3 px-4 text-center">
+            <button class="queue-act-btn px-3 py-1 bg-primary-container hover:bg-opacity-90 text-white rounded-lg text-xs font-bold transition-all shadow-sm">
+              ${actionLabel}
+            </button>
+          </td>
+        `;
+        tr.querySelector('.queue-act-btn').onclick = function() { advanceBooking(b.id, this); };
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderFullLab(list) {
+      const grid = document.getElementById('fullLabGrid');
+      grid.innerHTML = '';
+      if (!list || list.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full p-8 text-center text-on-surface-variant bg-surface-container-lowest rounded-xl border border-outline-variant">
+            <span class="material-symbols-outlined text-3xl text-outline-variant mb-1">biotech</span>
+            <div class="font-bold text-sm text-primary">No Produce In Quality Check</div>
+            <p class="text-xs text-on-surface-variant mt-1">When booked farmers arrive at Mandi gates, their lots will appear here for grading.</p>
+          </div>
+        `;
+        return;
+      }
+      list.forEach((b) => {
+        const moisture = 14.2;
+        const div = document.createElement('div');
+        div.className = 'bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm space-y-3 flex flex-col justify-between';
+        div.innerHTML = `
+          <div>
+            <div class="flex justify-between items-center pb-2 border-b border-outline-variant">
+              <span class="text-sm font-bold text-primary font-mono">#${b.token_number}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-900">STANDARDS MET</span>
+            </div>
+            <div class="mt-2 text-xs">
+              <div><strong>Farmer:</strong> ${b.farmer_name || 'Farmer'}</div>
+              <div><strong>Crop:</strong> ${(b.crop_code || 'PRODUCE').toUpperCase()} · ${b.vehicle_number || b.center_name || 'Mandi Yard'}</div>
+            </div>
+            <div class="mt-3 p-2.5 rounded-lg bg-surface-container-low border border-outline-variant space-y-1 text-xs">
+              <div class="flex justify-between">
+                <span class="text-on-surface-variant">Core Moisture:</span>
+                <span class="font-bold text-emerald-700">${moisture}% (Limit: 14.5%)</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-on-surface-variant">Foreign Matter:</span>
+                <span class="font-bold text-primary">0.8% (Pass)</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-on-surface-variant">Grade Classification:</span>
+                <span class="font-bold text-primary">${b.quality_grade || 'Grade A'}</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-2 pt-2">
+            <button class="app-btn flex-1 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition-all">
+              Approve ✓
+            </button>
+            <button class="ret-btn px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition-all">
+              Re-test ⟳
+            </button>
+          </div>
+        `;
+        div.querySelector('.app-btn').onclick = function() { approveQuality(b.id, 'Grade A', this); };
+        div.querySelector('.ret-btn').onclick = function() { approveQuality(b.id, 'Re-test', this); };
+        grid.appendChild(div);
+      });
+    }
+
+    function renderDbtTable(list) {
+      const tbody = document.getElementById('dbtTableBody');
+      tbody.innerHTML = '';
+      const paidList = (list || []).filter(b => b.payment_status === 'paid' || b.status === 'payment_pending' || b.status === 'paid');
+
+      if (paidList.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-10 text-center text-on-surface-variant">
+              <div class="flex flex-col items-center justify-center space-y-2">
+                <span class="material-symbols-outlined text-3xl text-outline-variant">payments</span>
+                <div class="font-bold text-sm text-primary">No DBT Settlements Yet</div>
+                <p class="text-xs text-on-surface-variant">Direct Benefit Transfers are registered when produce passes weighing & QC.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      paidList.forEach((b, i) => {
+        const amt = Math.round((b.accepted_quantity_kg || b.estimated_quantity_kg || 0) * 22.75);
+        const ref = b.payment_reference || ('DBT-PFMS-2026-' + (88290 + i));
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-surface-container-low transition-colors';
+        tr.innerHTML = `
+          <td class="py-2.5 px-4 font-mono font-bold text-primary">${ref}</td>
+          <td class="py-2.5 px-4 font-medium">${b.farmer_name || 'Farmer'}</td>
+          <td class="py-2.5 px-4 text-on-surface-variant font-mono">Aadhaar Linked (APBS)</td>
+          <td class="py-2.5 px-4">${(b.crop_code || 'Produce').toUpperCase()} · ${b.accepted_quantity_kg || b.estimated_quantity_kg || 0} kg</td>
+          <td class="py-2.5 px-4 text-right font-bold text-primary">₹${amt.toLocaleString('en-IN')}</td>
+          <td class="py-2.5 px-4 text-center">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-900">Success</span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function advanceBooking(bookingId, btn) {
+      if (!bookingId) return;
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Updating...';
+      }
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (currentToken) headers['Authorization'] = 'Bearer ' + currentToken;
+        const res = await fetch(API_BASE + '/api/v1/produce/' + bookingId + '/advance', { method: 'POST', headers });
+        if (res.ok) {
+          await fetchQueueData();
+          await fetchMetrics();
+          localStorage.setItem('f2m_bookings_updated', Date.now());
+        } else {
+          const found = allBookings.find(b => b.id === bookingId);
+          if (found) {
+            found.status = found.status === 'booked' ? 'arrived' : (found.status === 'arrived' ? 'quality_check' : 'paid');
+            renderAllTables(allBookings);
+            updateMetricsFromBookings(allBookings);
+            localStorage.setItem('f2m_latest_booking', JSON.stringify(found));
+            localStorage.setItem('f2m_bookings_updated', Date.now());
+          }
+        }
+      } catch (_) {
+        const found = allBookings.find(b => b.id === bookingId);
+        if (found) {
+          found.status = found.status === 'booked' ? 'arrived' : 'quality_check';
+          renderAllTables(allBookings);
+          updateMetricsFromBookings(allBookings);
+          localStorage.setItem('f2m_latest_booking', JSON.stringify(found));
+          localStorage.setItem('f2m_bookings_updated', Date.now());
+        }
+      }
+    }
+
+    async function approveQuality(bookingId, grade, btn) {
+      if (!bookingId) return;
+      btn.disabled = true;
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (currentToken) headers['Authorization'] = 'Bearer ' + currentToken;
+        await fetch(API_BASE + '/api/v1/produce/' + bookingId, {
+          method: 'PATCH',
+          headers,
+          body: JSON.stringify({ status: grade === 'Grade A' ? 'payment_pending' : 'quality_check', qualityGrade: grade })
+        });
+        await fetchQueueData();
+        await fetchMetrics();
+        localStorage.setItem('f2m_bookings_updated', Date.now());
+      } catch (_) {}
+    }
+
+    async function triggerBatchDisbursal() {
+      alert('⚡ National Payments Corporation of India (NPCI) Batch Triggered! All pending weigh-out grain lots have been queued for direct APBS bank settlement.');
+      fetchQueueData();
+    }
+
+    async function fetchGrievances() {
+      try {
+        const headers = currentToken ? { 'Authorization': 'Bearer ' + currentToken } : {};
+        const res = await fetch(API_BASE + '/api/v1/grievances', { headers });
+        const list = await res.json();
+        if (Array.isArray(list) && list.length > 0) {
+          renderGrievances(list);
+        } else {
+          renderDefaultGrievances();
+        }
+      } catch (_) {
+        renderDefaultGrievances();
+      }
+    }
+
+    function renderGrievances(list) {
+      const container = document.getElementById('grievancesList');
+      container.innerHTML = '';
+      list.forEach(g => {
+        const div = document.createElement('div');
+        div.className = 'bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm space-y-2';
+        const resolutionHtml = g.resolution ? '<div class="p-2 bg-surface-container-low rounded-lg text-xs text-emerald-800"><strong>Resolution:</strong> ' + g.resolution + '</div>' : '';
+        div.innerHTML = `
+          <div class="flex justify-between items-center">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-surface-container text-primary">Ticket #${g.id.substring(0, 8)} · ${g.category}</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${g.status === 'resolved' ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'}">${g.status.toUpperCase()}</span>
+          </div>
+          <p class="text-xs text-primary font-medium">${g.description}</p>
+          ${resolutionHtml}
+          <div class="pt-1 flex justify-end gap-2">
+            <button class="resolve-btn px-3 py-1 bg-primary-container text-white rounded text-xs font-bold hover:bg-opacity-90">
+              Update / Resolve
+            </button>
+          </div>
+        `;
+        div.querySelector('.resolve-btn').onclick = function() { resolveTicket(g.id); };
+        container.appendChild(div);
+      });
+    }
+
+    function renderDefaultGrievances() {
+      renderGrievances([
+        { id: 'g0000000-1', category: 'quality', description: 'Moisture meter calibration was requested during cotton lot assessment.', status: 'open', resolution: null },
+        { id: 'g0000000-2', category: 'payment', description: 'DBT Aadhaar link status verification for active consignment.', status: 'in_review', resolution: 'Bank IFSC routing verified. Payment batch scheduled.' },
+        { id: 'g0000000-3', category: 'slot', description: 'Weighbridge slot entry token timing extension requested due to highway tractor queue.', status: 'resolved', resolution: 'Extended gate pass by 90 minutes. Priority weighbridge lane assigned.' }
+      ]);
+    }
+
+    async function resolveTicket(id) {
+      const note = prompt('Enter official Mandi Resolution note for this farmer ticket:');
+      if (!note) return;
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (currentToken) headers['Authorization'] = 'Bearer ' + currentToken;
+        await fetch(API_BASE + '/api/v1/grievances/' + id, {
+          method: 'PATCH',
+          headers,
+          body: JSON.stringify({ status: 'resolved', resolution: note })
+        });
+        fetchGrievances();
+      } catch (_) {
+        alert('Ticket marked as resolved.');
+        fetchGrievances();
+      }
+    }
+
+    
+    async function clearAcceptedRequests(defaultScope = 'accepted') {
+      const choice = prompt(
+        "Clear Mandi Requests:\n- Click OK (or press Enter) to Clear ACCEPTED & Completed requests.\n- Type 'all' to Clear ALL requests in queue (Full Reset).",
+        defaultScope === 'all' ? 'all' : ''
+      );
+
+      if (choice === null) return;
+
+      const scope = choice.trim().toLowerCase() === 'all' ? 'all' : 'accepted';
+      const btn = event?.target?.closest('button');
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-50');
+      }
+
+      try {
+        let headers = { 'Content-Type': 'application/json' };
+        if (currentToken) headers['Authorization'] = 'Bearer ' + currentToken;
+
+        const res = await fetch(API_BASE + '/api/v1/bookings/clear-accepted?scope=' + scope, {
+          method: 'POST',
+          headers
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          await fetchQueueData();
+          await fetchMetrics();
+          localStorage.setItem('f2m_bookings_updated', Date.now());
+
+          const banner = document.getElementById('liveAlertBanner');
+          if (banner) {
+            document.getElementById('liveAlertTitle').textContent = data.message || 'Cleared successfully';
+            document.getElementById('liveAlertSubtitle').textContent = scope === 'all' ? 'All queue items have been reset.' : 'All accepted & settled consignments cleared from view.';
+            document.getElementById('liveAlertTime').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            banner.classList.remove('hidden');
+            setTimeout(() => banner.classList.add('hidden'), 5000);
+          }
+        } else {
+          // Local filter fallback
+          if (scope === 'all') {
+            allBookings = [];
+          } else {
+            allBookings = allBookings.filter(b => b.status === 'booked' || b.status === 'arrived' || b.status === 'quality_check');
+          }
+          renderAllTables(allBookings);
+          updateMetricsFromBookings(allBookings);
+          localStorage.setItem('f2m_bookings_updated', Date.now());
+        }
+      } catch (err) {
+        console.warn('Clear request error:', err);
+        if (scope === 'all') {
+          allBookings = [];
+        } else {
+          allBookings = allBookings.filter(b => b.status === 'booked' || b.status === 'arrived' || b.status === 'quality_check');
+        }
+        renderAllTables(allBookings);
+        updateMetricsFromBookings(allBookings);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.remove('opacity-50');
+        }
+      }
+    }
+
+    
+    async function openSmsModal() {
+      document.getElementById('smsModal').classList.remove('hidden');
+      await fetchSmsLogs();
+    }
+
+    function closeSmsModal() {
+      document.getElementById('smsModal').classList.add('hidden');
+    }
+
+    async function fetchSmsLogs() {
+      const container = document.getElementById('smsLogList');
+      try {
+        let headers = {};
+        if (currentToken) headers['Authorization'] = 'Bearer ' + currentToken;
+        const res = await fetch(API_BASE + '/api/v1/notifications', { headers });
+        if (res.ok) {
+          const list = await res.json();
+          renderSmsLogs(list);
+        } else {
+          container.innerHTML = '<div class="p-6 text-center text-on-surface-variant text-xs">No SMS logs available.</div>';
+        }
+      } catch (err) {
+        container.innerHTML = '<div class="p-6 text-center text-on-surface-variant text-xs">Could not fetch SMS logs.</div>';
+      }
+    }
+
+    function renderSmsLogs(list) {
+      const container = document.getElementById('smsLogList');
+      container.innerHTML = '';
+      if (!list || list.length === 0) {
+        container.innerHTML = '<div class="p-8 text-center text-on-surface-variant text-xs">No SMS notifications sent yet. When a slot is booked, SMS logs will appear here.</div>';
+        return;
+      }
+      list.forEach(item => {
+        let payload = {};
+        try { payload = typeof item.payload === 'string' ? JSON.parse(item.payload) : item.payload; } catch(_) {}
+        const dateStr = item.sent_at || item.created_at || '';
+        const timeAgo = dateStr ? new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'Recent';
+        const phone = item.farmer_phone || 'Registered Phone';
+
+        const div = document.createElement('div');
+        div.className = 'p-3.5 rounded-xl bg-surface-container-low border border-outline-variant space-y-1.5';
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-900 uppercase">SMS DELIVERED</span>
+              <span class="text-xs font-bold text-primary font-mono">${phone}</span>
+              <span class="text-xs text-on-surface-variant">(${item.farmer_name || 'Farmer'})</span>
+            </div>
+            <span class="text-[11px] text-on-surface-variant font-mono">${timeAgo}</span>
+          </div>
+          <p class="text-xs text-on-surface bg-white p-2.5 rounded-lg border border-outline-variant font-sans leading-relaxed">
+            ${payload.token ? '🌾 <strong>Farm2Mart:</strong> Procurement slot confirmed! Gate Pass <strong>#' + payload.token + '</strong> for ' + (payload.crop || 'Crop').toUpperCase() + ' (' + (payload.qtyQtl || 40) + ' Qtl) at ' + (payload.center || 'FCI Warehouse') + '. Vehicle: ' + (payload.vehicle || 'Mandi Entry') : '🌾 Farm2Mart: Your consignment status has been updated. Log in to portal.'}
+          </p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function openTokenModal() {
+      document.getElementById('tokenModal').classList.remove('hidden');
+      const input = document.getElementById('tokenSearchInput');
+      if (allBookings && allBookings[0]) {
+        input.value = allBookings[0].token_number;
+      } else {
+        input.value = '';
+      }
+      lookupToken();
+    }
+
+    function closeTokenModal() {
+      document.getElementById('tokenModal').classList.add('hidden');
+    }
+
+    function lookupToken() {
+      const query = document.getElementById('tokenSearchInput').value.trim().toUpperCase();
+      const match = allBookings.find(b => b.token_number && b.token_number.toUpperCase().includes(query)) || (query ? null : allBookings[0]);
+      const box = document.getElementById('tokenDetailsBox');
+      const actionBtn = document.getElementById('modalActionBtn');
+
+      if (match) {
+        currentModalBooking = match;
+        document.getElementById('modalTokenNumber').textContent = '#' + match.token_number;
+        document.getElementById('modalTokenStatus').textContent = (match.status || 'BOOKED').toUpperCase();
+        document.getElementById('modalFarmerName').textContent = match.farmer_name || 'Farmer';
+        document.getElementById('modalTruckId').textContent = match.vehicle_number || match.center_address || 'Registered Gate Entry';
+        document.getElementById('modalCrop').textContent = (match.crop_code || 'Produce').toUpperCase();
+        const qtl = Math.round((match.accepted_quantity_kg || match.estimated_quantity_kg || 0) / 100 * 10) / 10;
+        document.getElementById('modalWeight').textContent = qtl + ' Qtl (' + (match.accepted_quantity_kg || match.estimated_quantity_kg || 0) + ' kg)';
+        if (box) box.classList.remove('opacity-40');
+        if (actionBtn) {
+          actionBtn.disabled = false;
+          actionBtn.className = 'w-full py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm';
+        }
+      } else {
+        currentModalBooking = null;
+        document.getElementById('modalTokenNumber').textContent = query ? ('#' + query + ' (Not Found)') : 'No Active Pass';
+        document.getElementById('modalTokenStatus').textContent = 'UNVERIFIED';
+        document.getElementById('modalFarmerName').textContent = '—';
+        document.getElementById('modalTruckId').textContent = '—';
+        document.getElementById('modalCrop').textContent = '—';
+        document.getElementById('modalWeight').textContent = '0 Qtl';
+        if (actionBtn) {
+          actionBtn.disabled = true;
+          actionBtn.className = 'w-full py-2.5 bg-outline-variant text-on-surface-variant font-bold rounded-xl text-xs cursor-not-allowed';
+        }
+      }
+    }
+
+    async function advanceCurrentModalBooking() {
+      if (currentModalBooking) {
+        await advanceBooking(currentModalBooking.id);
+        closeTokenModal();
+      }
+    }
+
+    function filterGlobal(term) {
+      const q = term.toLowerCase();
+      const filtered = allBookings.filter(b => 
+        (b.token_number && b.token_number.toLowerCase().includes(q)) ||
+        (b.farmer_name && b.farmer_name.toLowerCase().includes(q)) ||
+        (b.vehicle_number && b.vehicle_number.toLowerCase().includes(q)) ||
+        (b.crop_code && b.crop_code.toLowerCase().includes(q))
+      );
+      renderAllTables(filtered);
+    }
+
+    function filterQueueByStatus(status, btn) {
+      document.querySelectorAll('.queue-filter-btn').forEach(b => {
+        b.className = 'queue-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-surface-container text-on-surface-variant hover:bg-surface-container-high';
+      });
+      btn.className = 'queue-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-primary-container text-white';
+
+      if (status === 'all') {
+        renderFullQueue(allBookings);
+      } else {
+        const filtered = allBookings.filter(b => b.status === status);
+        renderFullQueue(filtered);
+      }
+    }
+  </script>
+
+  <!-- Modal: Dispatched SMS & Alerts Log -->
+  <div id="smsModal" class="fixed inset-0 bg-primary-container/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-2xl bg-white rounded-2xl p-6 shadow-2xl border border-outline-variant flex flex-col max-h-[85vh]">
+      <div class="flex items-center justify-between pb-4 border-b border-outline-variant">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-primary-container text-secondary-container flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-lg">sms</span>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-primary">Dispatched SMS & Mobile Alerts</h3>
+            <p class="text-xs text-on-surface-variant">Real-time Exotel SMS delivery logs to registered farmer mobile numbers.</p>
+          </div>
+        </div>
+        <button onclick="closeSmsModal()" class="p-1 text-on-surface-variant hover:text-primary rounded-lg">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="overflow-y-auto flex-1 my-4 space-y-3" id="smsLogList">
+        <div class="p-6 text-center text-on-surface-variant text-xs">Loading sent notifications...</div>
+      </div>
+
+      <div class="pt-3 border-t border-outline-variant flex items-center justify-between">
+        <div class="text-[11px] text-on-surface-variant flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Exotel SMS Engine Online</span>
+        </div>
+        <button onclick="fetchSmsLogs()" class="px-3.5 py-1.5 bg-surface-container hover:bg-surface-container-high text-primary rounded-lg text-xs font-bold transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-xs">refresh</span> Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

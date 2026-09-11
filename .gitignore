@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+farm2mart/node_modules/
+
+# Environment Variables
+.env
+farm2mart/.env
+*.env.local
+
+# SQLite Database & Backups
+*.db
+*.db-journal
+farm2mart/*.db
+farm2mart/*.db-journal
+
+# Archives and build artifacts
+*.zip
+*.tar
+*.gz
+farm2mart_combined.zip
+stitch_admin_dashboard_ui.zip
+
+# Logs & temp
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+desktop.ini

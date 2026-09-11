@@ -1,0 +1,21 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE TYPE user_role AS ENUM ('farmer','staff','admin');
+CREATE TYPE booking_status AS ENUM ('booked','arrived','quality_check','payment_pending','paid','rejected','cancelled');
+CREATE TABLE farmers (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), phone varchar(16) UNIQUE NOT NULL, full_name varchar(100), village varchar(100), district varchar(100), state varchar(100), preferred_language varchar(5) NOT NULL DEFAULT 'en', created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE TABLE staff_users (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), phone varchar(16) UNIQUE NOT NULL, full_name varchar(100) NOT NULL, password_hash text NOT NULL, role user_role NOT NULL DEFAULT 'staff', center_id uuid, active boolean NOT NULL DEFAULT true, created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE otp_codes (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), phone varchar(16) NOT NULL, code_hash text NOT NULL, expires_at timestamptz NOT NULL, used_at timestamptz, created_at timestamptz NOT NULL DEFAULT now());
+CREATE INDEX otp_codes_phone_idx ON otp_codes(phone, created_at DESC);
+CREATE TABLE procurement_centers (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), name varchar(180) NOT NULL, agency varchar(100), address text, village varchar(100), district varchar(100) NOT NULL, state varchar(100) NOT NULL, latitude numeric(9,6), longitude numeric(9,6), active boolean NOT NULL DEFAULT true, created_at timestamptz NOT NULL DEFAULT now());
+ALTER TABLE staff_users ADD CONSTRAINT staff_center_fk FOREIGN KEY(center_id) REFERENCES procurement_centers(id);
+CREATE TABLE center_crops (center_id uuid REFERENCES procurement_centers(id) ON DELETE CASCADE, crop_code varchar(30) NOT NULL, PRIMARY KEY(center_id,crop_code));
+CREATE TABLE slots (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), center_id uuid NOT NULL REFERENCES procurement_centers(id), start_at timestamptz NOT NULL, end_at timestamptz NOT NULL, capacity integer NOT NULL CHECK(capacity > 0), reserved_count integer NOT NULL DEFAULT 0 CHECK(reserved_count >= 0), active boolean NOT NULL DEFAULT true, CHECK(end_at > start_at), UNIQUE(center_id,start_at));
+CREATE INDEX slots_center_date_idx ON slots(center_id,start_at);
+CREATE TABLE bookings (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), farmer_id uuid NOT NULL REFERENCES farmers(id), slot_id uuid NOT NULL REFERENCES slots(id), crop_code varchar(30) NOT NULL, estimated_quantity_kg numeric(12,2) NOT NULL CHECK(estimated_quantity_kg > 0), token_number varchar(20) UNIQUE NOT NULL, status booking_status NOT NULL, cancelled_at timestamptz, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
+CREATE INDEX bookings_farmer_idx ON bookings(farmer_id,created_at DESC);
+CREATE TABLE booking_events (id bigserial PRIMARY KEY, booking_id uuid NOT NULL REFERENCES bookings(id) ON DELETE CASCADE, status booking_status NOT NULL, note text, created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE produce_records (booking_id uuid PRIMARY KEY REFERENCES bookings(id) ON DELETE CASCADE, quality_grade varchar(20), accepted_quantity_kg numeric(12,2), payment_status varchar(20) NOT NULL DEFAULT 'pending', payment_reference varchar(100), updated_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE grievances (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), farmer_id uuid NOT NULL REFERENCES farmers(id), booking_id uuid REFERENCES bookings(id), category varchar(30) NOT NULL, description text NOT NULL, status varchar(20) NOT NULL, resolution text, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE notifications (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), farmer_id uuid NOT NULL REFERENCES farmers(id), channel varchar(20) NOT NULL, template varchar(60) NOT NULL, payload jsonb NOT NULL DEFAULT '{}', status varchar(20) NOT NULL, sent_at timestamptz, created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE queue_forecasts (slot_id uuid PRIMARY KEY REFERENCES slots(id) ON DELETE CASCADE, expected_arrivals integer NOT NULL CHECK(expected_arrivals>=0), model_version varchar(40), generated_at timestamptz NOT NULL DEFAULT now());

@@ -1,0 +1,502 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "inverse-primary": "#a5d0b9", "on-secondary-container": "#735a00", "inverse-surface": "#2a3329", "primary-fixed": "#c1ecd4", "secondary": "#755b00", "outline-variant": "#c1c8c2", "on-background": "#161e15", "surface-tint": "#3f6653", "surface-container-highest": "#dce5d7", "background": "#f3fcee", "surface-dim": "#d4ddcf", "surface-container-lowest": "#ffffff", "surface-container-high": "#e2ebdd", "tertiary-fixed": "#ffdcbb", "tertiary-fixed-dim": "#faba75", "on-tertiary-fixed-variant": "#673d00", "outline": "#717973", "error-container": "#ffdad6", "on-secondary-fixed-variant": "#584400", "on-primary-container": "#86af99", "secondary-fixed-dim": "#ecc246", "on-primary": "#ffffff", "primary": "#012d1d", "surface-variant": "#dce5d7", "surface-container": "#e8f1e2", "on-tertiary": "#ffffff", "primary-container": "#1b4332", "on-surface": "#161e15", "surface-container-low": "#edf6e8", "surface": "#f3fcee", "tertiary": "#3a2000", "on-primary-fixed": "#002114", "tertiary-container": "#583300", "on-secondary": "#ffffff", "inverse-on-surface": "#eaf3e5", "surface-bright": "#f3fcee", "secondary-fixed": "#ffe08e", "on-surface-variant": "#414844", "on-secondary-fixed": "#241a00", "on-tertiary-container": "#d59a58", "on-tertiary-fixed": "#2b1700", "error": "#ba1a1a", "secondary-container": "#fed255", "primary-fixed-dim": "#a5d0b9", "on-error": "#ffffff", "on-primary-fixed-variant": "#274e3d", "on-error-container": "#93000a" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "spacing-32": "2rem", "screen-edge-padding": "1rem", "touch-target-min": "3rem", "spacing-48": "3rem", "spacing-4": "0.25rem", "spacing-16": "1rem", "spacing-24": "1.5rem", "spacing-8": "0.5rem", "card-inner-padding": "1.25rem", "touch-target-primary": "3.5rem", "spacing-20": "1.25rem", "spacing-12": "0.75rem", "spacing-40": "2.5rem" }, "fontFamily": { "metric-display": ["Plus Jakarta Sans"], "headline-md": ["Newsreader"], "headline-lg-mobile": ["Newsreader"], "label-md": ["Plus Jakarta Sans"], "title-md": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "display-lg": ["Newsreader"], "headline-lg": ["Newsreader"], "title-lg": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"] }, "fontSize": { "metric-display": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "800" }], "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "500" }], "headline-lg-mobile": ["26px", { "lineHeight": "32px", "fontWeight": "600" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }], "title-md": ["16px", { "lineHeight": "22px", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }], "display-lg": ["40px", { "lineHeight": "48px", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "38px", "fontWeight": "600" }], "title-lg": ["18px", { "lineHeight": "24px", "fontWeight": "700" }], "label-lg": ["14px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }] } } } }</script></head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen" data-mode="connect"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 px-spacing-16 flex items-center justify-between"><div class="flex items-center gap-spacing-8"><img alt="Farm2Mart Brand Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WBZX_IkYaWyry6rU6cKzVT2jsJP59-pT4eeGBsCyg3PfJstg89POPUf6WPpsJ3_OvKBxqBjsR2NjCW8UmwDVI1hOqIXiqKIkaJYVF-__Qk4vktnDmiuxkMpVfnoETbOeF4Mwh2Q7vFkSfwni12fbhnKemDPm0OPfBDaONPQEMMEMz8widDp4ltIs4q2Hcd4sPHBsDP13AV1pevej-EwJFaQs0BSRG18LMGxWNvQFJ1CyIc6n9D4JxxjQ"><div class="flex flex-col"><span class="font-headline-md text-headline-md text-primary leading-tight">Farm2Mart</span><span class="font-label-sm text-label-sm text-on-surface-variant leading-none">Book Slot</span></div></div><div class="flex items-center gap-spacing-12"><button aria-label="Select Regional Language" class="h-touch-target-min min-w-touch-target-min px-spacing-12 py-spacing-4 rounded-full bg-surface-container-high hover:bg-surface-container-highest flex items-center gap-spacing-8 transition-colors shadow-sm cursor-pointer" id="language-picker-trigger"><div class="flex items-center gap-spacing-4 text-primary"><span class="material-symbols-outlined text-lg">translate</span><span class="font-label-sm text-label-sm font-bold">EN</span><span class="font-label-sm text-label-sm text-outline-variant">/</span><span class="font-label-sm text-label-sm font-bold text-primary">हिं</span></div><div class="flex items-center gap-spacing-4"><span class="px-spacing-4 py-spacing-4 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold leading-none">9 भाषाएं</span><span class="material-symbols-outlined text-base text-on-surface-variant">arrow_drop_down</span></div></button><button aria-label="View Profile" class="h-touch-target-min w-touch-target-min flex items-center justify-center rounded-full hover:opacity-90 transition-opacity"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbOLrET2TJZY6CPfTx0yJ_tb0Zp2c1uTSKmyJiHUmb8YHlXiNbloe1c4MZOmS7d3lfIKPpn9kTTJs12KIC-7pR6P1j0KSXVxBiT0LK1G7Ju3lkr2cKXxb0hS69EAfRT939KPcsR95og8uVGpAtnsC-MW1P1LSGcnRuXaxxnvu1jsmW5HSnIJslA1hPQ00vLnRdO1QPq8ywkAX0SpaGWVwOj4uWTo2o22iCIKhH-e-L2HpsD-Ew6ZU"></button></div></div></header><div class="hidden fixed top-20 left-0 right-0 z-50 px-screen-edge-padding max-w-md mx-auto" id="language-dropdown-modal"><div class="bg-surface-container-lowest rounded-xl p-card-inner-padding shadow-md space-y-spacing-12 border border-outline-variant/30 backdrop-blur-xl"><div class="flex items-center justify-between"><div class="flex items-center gap-spacing-8"><span class="material-symbols-outlined text-primary text-xl">language</span><h4 class="font-title-md text-title-md text-on-surface font-bold">Select Your Language / भाषा चुनें</h4></div><button aria-label="Close Language Menu" class="w-8 h-8 rounded-full bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center text-on-surface-variant transition-colors" id="btn-close-lang"><span class="material-symbols-outlined text-base">close</span></button></div><div class="grid grid-cols-3 gap-spacing-8" id="language-grid"><button class="flex flex-col items-center justify-center p-spacing-8 rounded-lg bg-primary-container text-on-primary shadow-sm" type="button"><span class="font-label-md text-label-md font-bold">English</span><span class="font-label-sm text-label-sm text-primary-fixed-dim">EN</span></button><button class="flex flex-col items-center justify-center p-spacing-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors" type="button"><span class="font-label-md text-label-md font-bold">हिंदी</span><span class="font-label-sm text-label-sm text-on-surface-variant">Hindi</span></button><button class="flex flex-col items-center justify-center p-spacing-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors" type="button"><span class="font-label-md text-label-md font-bold">தமிழ்</span><span class="font-label-sm text-label-sm text-on-surface-variant">Tamil</span></button><button class="flex flex-col items-center justify-center p-spacing-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors" type="button"><span class="font-label-md text-label-md font-bold">తెలుగు</span><span class="font-label-sm text-label-sm text-on-surface-variant">Telugu</span></button><button class="flex flex-col items-center justify-center p-spacing-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors" type="button"><span class="font-label-md text-label-md font-bold">ਪੰਜਾਬੀ</span><span class="font-label-sm text-label-sm text-on-surface-variant">Punjabi</span></button><button class="flex flex-col items-center justify-center p-spacing-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors" type="button"><span class="font-label-md text-label-md font-bold">मराठी</span><span class="font-label-sm text-label-sm text-on-surface-variant">Marathi</span></button><button class="flex flex-col items-center justify-center p-spacing-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors" type="button"><span class="font-label-md text-label-md font-bold">বাংলা</span><span class="font-label-sm text-label-sm text-on-surface-variant">Bengali</span></button><button class="flex flex-col items-center justify-center p-spacing-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors" type="button"><span class="font-label-md text-label-md font-bold">ગુજરાતી</span><span class="font-label-sm text-label-sm text-on-surface-variant">Gujarati</span></button><button class="flex flex-col items-center justify-center p-spacing-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors" type="button"><span class="font-label-md text-label-md font-bold">ಕನ್ನಡ</span><span class="font-label-sm text-label-sm text-on-surface-variant">Kannada</span></button></div></div></div><main class="flex flex-col relative w-full pt-20 pb-spacing-48 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Interactive Form Area -->
+<div class="px-screen-edge-padding space-y-spacing-24 pt-spacing-12 pb-spacing-48">
+<!-- Top Delight Header Banner -->
+<div class="bg-surface-container-high rounded-xl p-card-inner-padding shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-spacing-12">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shadow-sm">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">agriculture</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider block">Express Procurement</span>
+<h2 class="font-title-lg text-title-lg text-on-surface">Mandi Gate Pass</h2>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Live Window</span>
+<span class="font-title-md text-title-md text-primary font-bold">Today</span>
+</div>
+</div>
+<!-- Stepper Progress -->
+<section aria-label="Booking Progress" class="bg-surface-container-lowest rounded-xl p-card-inner-padding shadow-sm">
+<div class="flex items-center justify-between relative">
+<!-- Progress track behind steps -->
+<div class="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-1 bg-surface-container-high -z-0">
+<div class="h-full bg-primary-container transition-all duration-300 w-full rounded-full"></div>
+</div>
+<!-- Step 1 Complete -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-md text-label-md shadow-md">
+<span class="material-symbols-outlined text-lg">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold mt-spacing-4">Crop</span>
+</div>
+<!-- Step 2 Active -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-md text-label-md shadow-md">
+<span class="material-symbols-outlined text-lg">domain</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold mt-spacing-4">Center</span>
+</div>
+<!-- Step 3 Active/Selection -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-md text-label-md shadow-md">
+<span class="material-symbols-outlined text-lg">schedule</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-secondary-container font-bold mt-spacing-4">Slot</span>
+</div>
+</div>
+</section>
+<!-- STEP 1: Select Crop -->
+<section class="space-y-spacing-12">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-8">
+<span class="w-6 h-6 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm flex items-center justify-center font-bold">1</span>
+<h3 class="font-headline-md text-headline-md text-primary">Select Crop &amp; Yield</h3>
+</div>
+<span class="font-label-sm text-label-sm bg-primary-fixed text-on-primary-fixed px-spacing-8 py-spacing-4 rounded-full font-bold">Govt MSP 2024</span>
+</div>
+<!-- Crop Cards Grid -->
+<div class="grid grid-cols-1 gap-spacing-12" id="crop-selector">
+<!-- Wheat Card -->
+<div class="crop-card cursor-pointer bg-surface-container-lowest rounded-xl p-card-inner-padding shadow-sm hover:shadow-md transition-all flex items-center justify-between" data-crop="wheat">
+<div class="flex items-center gap-spacing-16">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-2xl">grain</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-on-surface font-bold">Wheat (Sharbati)</h4>
+<span class="font-label-md text-label-md text-on-surface-variant">Grade A · Fair Avg Quality</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-title-md text-title-md text-primary font-bold block">₹2,275</span>
+<span class="font-label-sm text-label-sm text-outline">per quintal</span>
+</div>
+</div>
+<!-- Paddy/Rice Card (Selected) -->
+<div class="crop-card cursor-pointer bg-primary-container text-on-primary rounded-xl p-card-inner-padding shadow-md flex items-center justify-between relative overflow-hidden" data-crop="paddy">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 rounded-full bg-on-primary/5 pointer-events-none"></div>
+<div class="flex items-center gap-spacing-16 relative z-10">
+<div class="w-12 h-12 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">eco</span>
+</div>
+<div>
+<div class="flex items-center gap-spacing-8">
+<h4 class="font-title-md text-title-md font-bold text-on-primary">Paddy / Rice (Common)</h4>
+<span class="material-symbols-outlined text-secondary-fixed text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-label-md text-label-md text-primary-fixed-dim">Cleaned &amp; Moisture Verified</span>
+</div>
+</div>
+<div class="text-right relative z-10">
+<span class="font-metric-display text-metric-display text-secondary-fixed font-bold block">₹2,183</span>
+<span class="font-label-sm text-label-sm text-primary-fixed">per quintal</span>
+</div>
+</div>
+<!-- Cotton Card -->
+<div class="crop-card cursor-pointer bg-surface-container-lowest rounded-xl p-card-inner-padding shadow-sm hover:shadow-md transition-all flex items-center justify-between" data-crop="cotton">
+<div class="flex items-center gap-spacing-16">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-2xl">cloud</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-on-surface font-bold">Cotton (Long Staple)</h4>
+<span class="font-label-md text-label-md text-on-surface-variant">Certified Dry Gin Grade</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-title-md text-title-md text-primary font-bold block">₹7,020</span>
+<span class="font-label-sm text-label-sm text-outline">per quintal</span>
+</div>
+</div>
+</div>
+<!-- Estimated Quantity Stepper / Selector -->
+<div class="bg-surface-container-low rounded-xl p-card-inner-padding mt-spacing-12">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-spacing-8">Estimated Delivery Volume</label>
+<div class="flex items-center justify-between bg-surface-container-lowest rounded-xl p-spacing-12 shadow-sm">
+<div class="flex items-center gap-spacing-12">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">local_shipping</span>
+</div>
+<div>
+<span class="font-title-md text-title-md text-on-surface font-bold block" id="yield-display">40 Quintals</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">approx. 2 trolley loads</span>
+</div>
+</div>
+<div class="flex items-center gap-spacing-8">
+<button class="w-10 h-10 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-on-surface flex items-center justify-center transition-colors" id="btn-yield-minus" type="button">
+<span class="material-symbols-outlined text-lg font-bold">remove</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-sm" id="btn-yield-plus" type="button">
+<span class="material-symbols-outlined text-lg font-bold">add</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- STEP 2: Select Procurement Centre -->
+<section class="space-y-spacing-12">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-8">
+<span class="w-6 h-6 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm flex items-center justify-center font-bold">2</span>
+<h3 class="font-headline-md text-headline-md text-primary">Procurement Centre</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-spacing-4">
+<span class="material-symbols-outlined text-sm text-secondary">near_me</span> Nearest 10km
+        </span>
+</div>
+<!-- Center Cards -->
+<div class="space-y-spacing-12" id="center-selector">
+<!-- Center 1: FCI Warehouse Perungudi (Selected) -->
+<div class="center-card cursor-pointer bg-surface-container-lowest rounded-xl p-card-inner-padding shadow-md shadow-primary/5 transition-all relative overflow-hidden bg-gradient-to-br from-surface-container-lowest to-surface-container-low" data-center="perungudi">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-spacing-12">
+<div class="w-10 h-10 rounded-xl bg-primary-container text-on-primary flex items-center justify-center shrink-0 mt-spacing-4 shadow-sm">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+<div>
+<div class="flex items-center gap-spacing-8">
+<h4 class="font-title-md text-title-md text-on-surface font-bold">FCI Warehouse, Perungudi</h4>
+</div>
+<div class="flex items-center gap-spacing-8 text-on-surface-variant mt-spacing-4">
+<span class="font-body-md text-body-md">3.2 km away</span>
+<span class="text-outline-variant">•</span>
+<span class="font-body-md text-body-md text-primary font-semibold">Avg wait: 20 mins</span>
+</div>
+</div>
+</div>
+<!-- Low Crowd Pill -->
+<span class="px-spacing-8 py-spacing-4 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold flex items-center gap-spacing-4 shrink-0 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+              Low Crowd
+            </span>
+</div>
+<!-- Micro specs bar -->
+<div class="mt-spacing-12 pt-spacing-8 bg-surface-container-high/40 rounded-lg p-spacing-8 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span class="flex items-center gap-spacing-4"><span class="material-symbols-outlined text-sm text-primary">scale</span> 4 Weighbridges Active</span>
+<span class="flex items-center gap-spacing-4"><span class="material-symbols-outlined text-sm text-secondary">verified_user</span> Instant Disbursal</span>
+</div>
+</div>
+<!-- Center 2: State Procurement Centre Ambattur -->
+<div class="center-card cursor-pointer bg-surface-container-lowest rounded-xl p-card-inner-padding shadow-sm hover:shadow-md transition-all" data-center="ambattur">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-spacing-12">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface-variant flex items-center justify-center shrink-0 mt-spacing-4">
+<span class="material-symbols-outlined text-xl">warehouse</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-on-surface font-bold">State Procurement, Ambattur</h4>
+<div class="flex items-center gap-spacing-8 text-on-surface-variant mt-spacing-4">
+<span class="font-body-md text-body-md">8.7 km away</span>
+<span class="text-outline-variant">•</span>
+<span class="font-body-md text-body-md">Avg wait: 45 mins</span>
+</div>
+</div>
+</div>
+<!-- Moderate Crowd Pill -->
+<span class="px-spacing-8 py-spacing-4 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold shrink-0">
+              Moderate
+            </span>
+</div>
+</div>
+<!-- Center 3: Cooperative Centre Madipakkam -->
+<div class="center-card cursor-pointer bg-surface-container-lowest rounded-xl p-card-inner-padding shadow-sm hover:shadow-md transition-all" data-center="madipakkam">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-spacing-12">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface-variant flex items-center justify-center shrink-0 mt-spacing-4">
+<span class="material-symbols-outlined text-xl">store</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-on-surface font-bold">Cooperative Centre, Madipakkam</h4>
+<div class="flex items-center gap-spacing-8 text-on-surface-variant mt-spacing-4">
+<span class="font-body-md text-body-md">5.1 km away</span>
+<span class="text-outline-variant">•</span>
+<span class="font-body-md text-body-md text-error">Avg wait: 75 mins</span>
+</div>
+</div>
+</div>
+<!-- High Crowd Pill -->
+<span class="px-spacing-8 py-spacing-4 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold shrink-0">
+              High Crowd
+            </span>
+</div>
+</div>
+</div>
+</section>
+<!-- STEP 3: Choose Time Window (Crowd-Aware) -->
+<section class="space-y-spacing-12">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-8">
+<span class="w-6 h-6 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm flex items-center justify-center font-bold">3</span>
+<h3 class="font-headline-md text-headline-md text-primary">Choose Time Window</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Live Traffic Sync</span>
+</div>
+<div class="space-y-spacing-8" id="time-slots">
+<!-- Slot 1: 07:00 AM - 08:30 AM (Selected) -->
+<div class="slot-card cursor-pointer bg-surface-container-lowest rounded-xl p-card-inner-padding shadow-md shadow-primary/5 transition-all" data-slot="1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-12">
+<div class="w-6 h-6 rounded-full bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-sm font-bold">check</span>
+</div>
+<div>
+<span class="font-title-md text-title-md text-on-surface font-bold block">07:00 AM – 08:30 AM</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold flex items-center gap-spacing-4">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+                  Low Crowd · Recommended for quick drop
+                </span>
+</div>
+</div>
+<span class="px-spacing-8 py-spacing-4 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">Fast Lane</span>
+</div>
+</div>
+<!-- Slot 2: 09:00 AM - 10:30 AM (Amber) -->
+<div class="slot-card cursor-pointer bg-surface-container-lowest rounded-xl p-card-inner-padding shadow-sm hover:shadow-md transition-all" data-slot="2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-12">
+<div class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<div>
+<span class="font-title-md text-title-md text-on-surface font-semibold block">09:00 AM – 10:30 AM</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium flex items-center gap-spacing-4">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                  Moderate Crowd
+                </span>
+</div>
+</div>
+<span class="px-spacing-8 py-spacing-4 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">+15 min queue</span>
+</div>
+</div>
+<!-- Slot 3: 11:00 AM - 12:30 PM (Red) -->
+<div class="slot-card cursor-pointer bg-surface-container-lowest rounded-xl p-card-inner-padding shadow-sm hover:shadow-md transition-all opacity-85" data-slot="3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-12">
+<div class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+</div>
+<div>
+<span class="font-title-md text-title-md text-on-surface font-semibold block">11:00 AM – 12:30 PM</span>
+<span class="font-label-sm text-label-sm text-error font-medium flex items-center gap-spacing-4">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+                  Peak Crowd · Long Queues
+                </span>
+</div>
+</div>
+<span class="px-spacing-8 py-spacing-4 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">High Delay</span>
+</div>
+</div>
+<!-- Slot 4: 03:00 PM - 04:30 PM (Green) -->
+<div class="slot-card cursor-pointer bg-surface-container-lowest rounded-xl p-card-inner-padding shadow-sm hover:shadow-md transition-all" data-slot="4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-12">
+<div class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+</div>
+<div>
+<span class="font-title-md text-title-md text-on-surface font-semibold block">03:00 PM – 04:30 PM</span>
+<span class="font-label-sm text-label-sm text-primary font-medium flex items-center gap-spacing-4">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+                  Low Crowd
+                </span>
+</div>
+</div>
+<span class="px-spacing-8 py-spacing-4 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">Fast Lane</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Visual Assurance Card -->
+<div class="bg-surface-container rounded-xl p-card-inner-padding flex items-start gap-spacing-12 shadow-sm">
+<span class="material-symbols-outlined text-primary text-2xl shrink-0 mt-spacing-4">verified</span>
+<div class="space-y-spacing-4">
+<h4 class="font-title-md text-title-md text-primary font-bold">Direct Disbursal Guarantee</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Your weighing slip auto-syncs with DBT Mandi Portal. Payment is transferred directly to your Aadhaar-linked bank account within 24 hours.</p>
+</div>
+</div>
+<script>(function(){var trigger=document.getElementById('language-picker-trigger');var modal=document.getElementById('language-dropdown-modal');var closeBtn=document.getElementById('btn-close-lang');if(trigger&&modal){trigger.addEventListener('click',function(e){e.stopPropagation();modal.classList.toggle('hidden');});}if(closeBtn&&modal){closeBtn.addEventListener('click',function(e){e.stopPropagation();modal.classList.add('hidden');});}var langBtns=document.querySelectorAll('#language-grid button');langBtns.forEach(function(btn){btn.addEventListener('click',function(e){e.stopPropagation();langBtns.forEach(function(b){b.classList.remove('bg-primary-container','text-on-primary','shadow-sm');b.classList.add('bg-surface-container','text-on-surface');});btn.classList.add('bg-primary-container','text-on-primary','shadow-sm');btn.classList.remove('bg-surface-container','text-on-surface');if(modal){modal.classList.add('hidden');}});});})();</script></div>
+<!-- Sticky Bottom Confirmation Bar -->
+<div class="sticky bottom-20 z-40 bg-surface/95 backdrop-blur-md shadow-[0_-4px_16px_rgba(1,45,29,0.08)] px-screen-edge-padding py-spacing-12">
+<div class="max-w-md mx-auto space-y-spacing-8">
+<!-- ETA Summary Banner -->
+<div class="flex items-center justify-between px-spacing-4">
+<div class="flex items-center gap-spacing-8">
+<span class="material-symbols-outlined text-primary text-lg animate-spin" style="animation-duration: 4s;">timelapse</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Estimated Turn-Around:</span>
+<span class="font-title-md text-title-md text-primary font-bold">35 mins total</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-bold">Priority Pass</span>
+</div>
+<!-- High-Urgency Primary Action Button -->
+<button class="w-full h-touch-target-primary rounded-xl bg-secondary-container hover:bg-secondary-fixed text-on-secondary-container font-label-lg text-label-lg font-bold flex items-center justify-center gap-spacing-8 shadow-md hover:shadow-lg active:scale-[0.99] transition-all" id="btn-confirm-slot" type="button">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">qr_code_2</span>
+<span class="">Confirm &amp; Generate Digital Token</span>
+<span class="material-symbols-outlined text-xl">arrow_forward</span>
+</button>
+</div>
+<script>(function(){var trigger=document.getElementById('language-picker-trigger');var modal=document.getElementById('language-dropdown-modal');var closeBtn=document.getElementById('btn-close-lang');if(trigger&&modal){trigger.addEventListener('click',function(e){e.stopPropagation();modal.classList.toggle('hidden');});}if(closeBtn&&modal){closeBtn.addEventListener('click',function(e){e.stopPropagation();modal.classList.add('hidden');});}var langBtns=document.querySelectorAll('#language-grid button');langBtns.forEach(function(btn){btn.addEventListener('click',function(e){e.stopPropagation();langBtns.forEach(function(b){b.classList.remove('bg-primary-container','text-on-primary','shadow-sm');b.classList.add('bg-surface-container','text-on-surface');});btn.classList.add('bg-primary-container','text-on-primary','shadow-sm');btn.classList.remove('bg-surface-container','text-on-surface');if(modal){modal.classList.add('hidden');}});});})();</script></div>
+<!-- Micro Interaction Script -->
+<script>
+    (function() {
+      // Yield Stepper logic
+      var yieldVal = 40;
+      var yieldDisplay = document.getElementById('yield-display');
+      var btnMinus = document.getElementById('btn-yield-minus');
+      var btnPlus = document.getElementById('btn-yield-plus');
+
+      if (btnMinus && btnPlus && yieldDisplay) {
+        btnMinus.addEventListener('click', function() {
+          if (yieldVal > 10) {
+            yieldVal -= 5;
+            var trolleys = (yieldVal / 20).toFixed(1);
+            yieldDisplay.textContent = yieldVal + ' Quintals';
+            yieldDisplay.nextElementSibling.textContent = 'approx. ' + trolleys + ' trolley loads';
+          }
+        });
+
+        btnPlus.addEventListener('click', function() {
+          if (yieldVal < 200) {
+            yieldVal += 5;
+            var trolleys = (yieldVal / 20).toFixed(1);
+            yieldDisplay.textContent = yieldVal + ' Quintals';
+            yieldDisplay.nextElementSibling.textContent = 'approx. ' + trolleys + ' trolley loads';
+          }
+        });
+      }
+
+      // Slot card selection micro-interaction
+      var slotCards = document.querySelectorAll('.slot-card');
+      slotCards.forEach(function(card) {
+        card.addEventListener('click', function() {
+          slotCards.forEach(function(c) {
+            c.classList.remove('bg-surface-container-high', 'shadow-md');
+            c.classList.add('bg-surface-container-lowest', 'shadow-sm');
+          });
+          card.classList.add('bg-surface-container-high', 'shadow-md');
+          card.classList.remove('bg-surface-container-lowest');
+        });
+      });
+
+      // Submit feedback simulation
+      var confirmBtn = document.getElementById('btn-confirm-slot');
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', function() {
+          var originalContent = confirmBtn.innerHTML;
+          confirmBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-xl">progress_activity</span><span>Generating Pass...</span>';
+          setTimeout(function() {
+            confirmBtn.innerHTML = '<span class="material-symbols-outlined text-xl">check_circle</span><span>Token #F2M-9024 Ready!</span>';
+            confirmBtn.classList.remove('bg-secondary-container', 'text-on-secondary-container');
+            confirmBtn.classList.add('bg-primary-container', 'text-on-primary');
+          }, 800);
+        });
+      }
+    })();
+  </script>
+</div></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(27,67,50,0.06)]" data-active-classes="text-primary-container font-bold"><div class="flex items-center justify-around h-20 px-spacing-8"><a class="flex flex-col items-center justify-center min-w-touch-target-min h-touch-target-min text-on-surface-variant hover:text-primary transition-all" data-path="home" href="index.html"><span class="material-symbols-outlined text-2xl">home</span><span class="font-label-sm text-label-sm mt-spacing-4">Home</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-touch-target-min h-touch-target-min transition-all text-primary-container font-bold" data-path="book-slot" href="book-slot.html"><span class="material-symbols-outlined text-2xl">calendar_add_on</span><span class="font-label-sm text-label-sm mt-spacing-4">Book Slot</span></a><a class="flex flex-col items-center justify-center min-w-touch-target-min h-touch-target-min text-on-surface-variant hover:text-primary transition-all" data-path="track-status" href="track-status.html"><span class="material-symbols-outlined text-2xl">inventory</span><span class="font-label-sm text-label-sm mt-spacing-4">Track Status</span></a><a class="flex flex-col items-center justify-center min-w-touch-target-min h-touch-target-min text-on-surface-variant hover:text-primary transition-all" data-path="support" href="support.html"><span class="material-symbols-outlined text-2xl">support_agent</span><span class="font-label-sm text-label-sm mt-spacing-4">Support</span></a></div></nav>
+
+  <script src="js/api.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    await API.ensureFarmerSession();
+
+    let selectedCrop = 'paddy';
+    let selectedYield = 40; // Quintals
+    let selectedCenterId = '00000000-0000-0000-0000-000000000001';
+    let selectedSlotId = null;
+    let availableSlots = [];
+
+    // Crop selection
+    const cropCards = document.querySelectorAll('.crop-card');
+    cropCards.forEach(card => {
+      card.addEventListener('click', () => {
+        cropCards.forEach(c => {
+          c.className = 'crop-card cursor-pointer bg-surface-container-lowest rounded-xl p-card-inner-padding shadow-sm hover:shadow-md transition-all flex items-center justify-between';
+        });
+        card.className = 'crop-card cursor-pointer bg-primary-container text-on-primary rounded-xl p-card-inner-padding shadow-md flex items-center justify-between relative overflow-hidden';
+        selectedCrop = card.getAttribute('data-crop') || 'paddy';
+        loadSlotsForCenter();
+      });
+    });
+
+    // Center selection
+    const centerCards = document.querySelectorAll('.center-card');
+    const centerMap = {
+      'perungudi': '00000000-0000-0000-0000-000000000001',
+      'ambattur': '00000000-0000-0000-0000-000000000002',
+      'madipakkam': '00000000-0000-0000-0000-000000000003'
+    };
+
+    centerCards.forEach(card => {
+      card.addEventListener('click', () => {
+        centerCards.forEach(c => {
+          c.classList.remove('bg-surface-container-high', 'border-2', 'border-primary');
+          c.classList.add('bg-surface-container-lowest');
+        });
+        card.classList.add('bg-surface-container-high', 'border-2', 'border-primary');
+        card.classList.remove('bg-surface-container-lowest');
+        
+        const key = card.getAttribute('data-center');
+        selectedCenterId = centerMap[key] || '00000000-0000-0000-0000-000000000001';
+        loadSlotsForCenter();
+      });
+    });
+
+    // Load dynamic slots from backend
+    async function loadSlotsForCenter() {
+      try {
+        const slots = await API.getSlots(selectedCenterId);
+        availableSlots = slots || [];
+        if (availableSlots.length > 0) {
+          selectedSlotId = availableSlots[0].id;
+        }
+      } catch (err) {
+        console.warn('Could not load slots:', err);
+      }
+    }
+    loadSlotsForCenter();
+
+    // Confirm & Generate Token
+    const confirmBtn = document.getElementById('btn-confirm-slot');
+    if (confirmBtn) {
+      // Replace dummy listener with real API call
+      const newBtn = confirmBtn.cloneNode(true);
+      confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+
+      newBtn.addEventListener('click', async () => {
+        newBtn.disabled = true;
+        const originalContent = newBtn.innerHTML;
+        newBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-xl">progress_activity</span><span>Securing Gate Slot with Mandi...</span>';
+
+        try {
+          if (!selectedSlotId && availableSlots.length > 0) {
+            selectedSlotId = availableSlots[0].id;
+          }
+
+          const booking = await API.createBooking({
+            slotId: selectedSlotId || '00000000-0000-0000-0000-000000000001',
+            cropCode: selectedCrop,
+            estimatedQuantityKg: selectedYield * 100,
+            replaceActive: true
+          });
+
+          API.showToast('Gate Slot Confirmed! Token: #' + booking.token_number);
+          newBtn.innerHTML = '<span class="material-symbols-outlined text-xl">check_circle</span><span>Token #' + booking.token_number + ' Ready!</span>';
+
+          setTimeout(() => {
+            window.location.href = 'token-pass.html?bookingId=' + booking.id;
+          }, 900);
+        } catch (err) {
+          API.showToast(err.message, 'error');
+          newBtn.innerHTML = originalContent;
+          newBtn.disabled = false;
+        }
+      });
+    }
+  });
+</script>
+
+</body></html>
