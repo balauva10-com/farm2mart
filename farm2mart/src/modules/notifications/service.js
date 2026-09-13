@@ -5,15 +5,16 @@ import { sendExotelSms, triggerExotelCall } from '../../lib/exotel.js';
  * Format human-readable message text for farmer SMS
  */
 function buildMessageBody(template, payload = {}) {
+  const baseUrl = process.env.BASE_URL || 'https://farm2mart.onrender.com';
   switch (template) {
     case 'slot_confirmed':
-      return `🌾 Farm2Mart: Namaste ${payload.farmerName || 'Kisan'}! Your procurement slot is CONFIRMED. Gate Pass Token: #${payload.token || 'N/A'}. Commodity: ${(payload.crop || 'Paddy').toUpperCase()} (${payload.qtyQtl || 40} Qtl) at ${payload.center || 'FCI Warehouse, Perungudi'}. Vehicle: ${payload.vehicle || 'Mandi Gate Entry'}. View Live Pass: https://sphere-sleet-purist.ngrok-free.dev`;
+      return `Farm2Mart: Namaste ${payload.farmerName || 'Kisan'}! Your procurement slot is CONFIRMED. Gate Pass Token: #${payload.token || 'N/A'}. Commodity: ${(payload.crop || 'Paddy').toUpperCase()} (${payload.qtyQtl || 40} Qtl) at ${payload.center || 'FCI Warehouse, Perungudi'}. Vehicle: ${payload.vehicle || 'Mandi Gate Entry'}. View Pass: ${baseUrl}/token-pass.html?token=${payload.token || ''}`;
     case 'produce_stage_advanced':
-      return `🌾 Farm2Mart: Gate Pass #${payload.token || ''} has progressed to stage: ${(payload.stage || '').replace('_', ' ').toUpperCase()} at Mandi Weighbridge.`;
+      return `Farm2Mart: Gate Pass #${payload.token || ''} has progressed to stage: ${(payload.stage || '').replace('_', ' ').toUpperCase()} at Mandi Weighbridge.`;
     case 'grievance_updated':
-      return `🌾 Farm2Mart: Your grievance status is updated to: ${(payload.status || '').toUpperCase()}. Log in to review the resolution details.`;
+      return `Farm2Mart: Your grievance status is updated to: ${(payload.status || '').toUpperCase()}. Log in to review the resolution details.`;
     default:
-      return `🌾 Farm2Mart: You have an updated status on your account. Log in to Farm2Mart for details.`;
+      return `Farm2Mart: You have an updated status on your account. Log in to Farm2Mart for details: ${baseUrl}`;
   }
 }
 
@@ -35,18 +36,25 @@ export async function queueNotification({ farmerId, channel = 'sms', template, p
     console.warn('[Notification DB Warning]', err.message);
   }
 
-  // 2. Fetch farmer contact details
+  // 2. Fetch farmer contact details if not supplied directly in payload
   let farmer = null;
-  try {
-    const { rows } = await query('SELECT phone, full_name, preferred_language FROM farmers WHERE id = $1', [farmerId]);
-    farmer = rows?.[0];
-  } catch (err) {
-    console.warn('[Notification Farmer Lookup Warning]', err.message);
+  if (!payload.phone || !payload.farmerName) {
+    try {
+      const { rows } = await query('SELECT phone, full_name, preferred_language FROM farmers WHERE id = $1', [farmerId]);
+      farmer = rows?.[0];
+    } catch (err) {
+      console.warn('[Notification Farmer Lookup Warning]', err.message);
+    }
   }
 
-  if (!farmer?.phone) {
+  const targetPhone = payload.phone || farmer?.phone;
+  if (!targetPhone) {
     console.log(`[Notification] Farmer ID ${farmerId} has no registered phone number. Notification logged as queued.`);
     return { queued: true, dispatched: false, reason: 'no_phone' };
+  }
+
+  if (farmer && !payload.farmerName && farmer.full_name) {
+    payload.farmerName = farmer.full_name;
   }
 
   // 3. Dispatch via Exotel
@@ -54,9 +62,9 @@ export async function queueNotification({ farmerId, channel = 'sms', template, p
   try {
     let result;
     if (channel === 'call' || channel === 'ivr') {
-      result = await triggerExotelCall({ to: farmer.phone });
+      result = await triggerExotelCall({ to: targetPhone });
     } else {
-      result = await sendExotelSms({ to: farmer.phone, body });
+      result = await sendExotelSms({ to: targetPhone, body });
     }
 
     const finalStatus = result.success ? 'sent' : 'failed';

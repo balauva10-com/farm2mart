@@ -95,6 +95,9 @@ async function handlePassthrough(req, res) {
       await query("INSERT INTO booking_events(booking_id, status, note) VALUES ($1, 'booked', 'Slot booked automatically via Exotel IVR Call')", [insertRes.rows[0].id]);
 
       // Automatically dispatch SMS to caller's registered mobile number!
+      const baseUrl = process.env.BASE_URL || 'https://farm2mart.onrender.com';
+      const cleanSmsText = `Farm2Mart: Namaste ${farmerName}! Your procurement slot is CONFIRMED. Gate Pass Token: #${tokenNumber}. Commodity: ${cropCode.toUpperCase()} (40 Qtl) at FCI Warehouse, Perungudi. Vehicle: ${vehicleNumber}. View Pass: ${baseUrl}/token-pass.html?token=${tokenNumber}`;
+
       try {
         await queueNotification({
           farmerId,
@@ -106,7 +109,8 @@ async function handlePassthrough(req, res) {
             qtyQtl: Math.round(qtyKg / 100),
             farmerName,
             center: 'FCI Warehouse, Perungudi',
-            vehicle: vehicleNumber
+            vehicle: vehicleNumber,
+            phone: phone
           }
         });
       } catch (smsErr) {
@@ -117,7 +121,8 @@ async function handlePassthrough(req, res) {
         ...insertRes.rows[0],
         farmer_name: farmerName,
         farmer_phone: phone,
-        center_name: 'FCI Warehouse, Perungudi'
+        center_name: 'FCI Warehouse, Perungudi',
+        sms_text: cleanSmsText
       };
 
       console.log(`[Exotel Passthrough] 🎫 NEW GATE PASS BOOKED: ${tokenNumber} for ${farmerName} (${phone}) - Truck: ${vehicleNumber}`);
@@ -137,11 +142,24 @@ async function handlePassthrough(req, res) {
     speechText = 'Today MSP rates are: Wheat rupees 2275 per quintal. Paddy rupees 2183 per quintal. Cotton rupees 7122 per quintal.';
   }
 
+  // Set response headers for Exotel Flow variables
+  if (bookingInfo?.token_number) {
+    res.setHeader('X-Gate-Pass-Token', bookingInfo.token_number);
+    res.setHeader('X-Exotel-SMS', bookingInfo.sms_text || '');
+  }
+
+  // If caller or Exotel applet specifically requests SMS format
+  if (params.format === 'sms' || params.type === 'sms') {
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    return res.status(200).send(bookingInfo?.sms_text || speechText);
+  }
+
   // If client wants JSON
   if (req.headers.accept && req.headers.accept.includes('application/json')) {
     return res.status(200).json({
       status: 'success',
       speech: speechText,
+      sms: bookingInfo?.sms_text,
       booking: bookingInfo
     });
   }
@@ -151,8 +169,58 @@ async function handlePassthrough(req, res) {
   return res.status(200).send(speechText);
 }
 
+/**
+ * Exotel SMS Applet Dedicated Handler
+ * Can be plugged directly into Exotel Call Flow (SMS Applet URL)
+ * GET or POST: /api/v1/exotel/sms?From=+919876543210
+ */
+async function handleSmsWebhook(req, res) {
+  const params = req.method === 'POST' ? { ...req.query, ...req.body } : req.query;
+  const rawFrom = params.From || params.Caller || params.phone || '';
+  const phone = normalisePhone(rawFrom);
+  const baseUrl = process.env.BASE_URL || 'https://farm2mart.onrender.com';
+
+  if (!phone) {
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    return res.status(200).send('Farm2Mart: Welcome! Call this number to book your mandi procurement slot.');
+  }
+
+  try {
+    const bookingRes = await query(`
+      SELECT b.token_number, b.crop_code, b.estimated_quantity_kg, b.vehicle_number, b.status, c.name AS center_name, f.full_name AS farmer_name
+      FROM bookings b
+      JOIN farmers f ON f.id = b.farmer_id
+      JOIN slots s ON s.id = b.slot_id
+      JOIN procurement_centers c ON c.id = s.center_id
+      WHERE f.phone = $1 OR f.phone LIKE $2
+      ORDER BY b.created_at DESC LIMIT 1
+    `, [phone, '%' + phone.slice(-10)]);
+
+    if (bookingRes.rows && bookingRes.rows.length > 0) {
+      const b = bookingRes.rows[0];
+      const qtl = Math.round((b.estimated_quantity_kg || 4000) / 100);
+      const sms = `Farm2Mart: Namaste ${b.farmer_name || 'Kisan'}! Your slot is CONFIRMED. Gate Pass #${b.token_number} for ${(b.crop_code || 'Paddy').toUpperCase()} (${qtl} Qtl) at ${b.center_name || 'FCI Warehouse'}. Gate Entry: ${b.vehicle_number}. View Pass: ${baseUrl}/token-pass.html?token=${b.token_number}`;
+
+      if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return res.status(200).json({ status: 'success', sms, token: b.token_number });
+      }
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      return res.status(200).send(sms);
+    }
+  } catch (err) {
+    console.warn('[Exotel SMS Webhook Error]', err.message);
+  }
+
+  const fallback = 'Farm2Mart: Namaste! Your mandi procurement slot is active. Call our IVR anytime to view your status.';
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  return res.status(200).send(fallback);
+}
+
 // Support both GET and POST for Exotel Passthrough applet
 router.get('/', handlePassthrough);
 router.post('/', handlePassthrough);
+
+// Dedicated SMS applet endpoint
+router.all('/sms', handleSmsWebhook);
 
 export default router;
